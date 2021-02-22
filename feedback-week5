@@ -1,0 +1,10 @@
+This looks good to me! A few comments: 
+
+1. Django is a learning curve so make sure to plan out enough time to understand that package. I wouldn't worry about the aesthetics that will get produced and just make sure the interaction works and produces the appropriate output. 
+
+2. A static map will suffice in this case and if you have time you can make it interactive. 
+
+3. If you are thinking about similarity for strings then I recommend that you use Jellyfish: https://github.com/jamesturk/jellyfish
+
+
+Let me know if you need anything else. 
