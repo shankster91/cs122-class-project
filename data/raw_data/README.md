@@ -1,2 +1,1 @@
-
-This folder contains the rawest form of the data, i.e. the files that were downloaded straight from a website
+This folder contains the rawest form of the data, i.e. the files that were downloaded straight from a website. If the source data is too large, a sample of appropriate size should be uploaded in its place. The data folder should contain the totals
