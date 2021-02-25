@@ -188,14 +188,13 @@ col_names = ['mean_HH_size',
 def pull_census_data():
     '''
     Pulls basic demographic data at the zip code level from the 5-year American
-    Community Survey.
+    Community Survey. Writes the data to a csv called census_data.csv.
 
     Inputs:
         None
 
     Outputs:
-        data: a pandas dataframe containing demographic data for each U.S. zip
-          code.
+        None
     '''
     data = censusdata.download('acs5', 2019,
                                censusdata.censusgeo([('state', '*'),
@@ -206,7 +205,7 @@ def pull_census_data():
     state_abbrs = []
     for label in data.index:
         state_code = label.geo[0][1]
-        state = us.states.lookup(state_code)
+        state = us.states.lookup(state_code) # convert the FIPS codes to state postal codes
         state_abbrs.append(state.abbr)
         zip_code = label.geo[1][1]
         zip_codes.append(zip_code)
