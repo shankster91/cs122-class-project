@@ -19,14 +19,14 @@ def county_to_zip(data):
 
     Inputs:
         data: a pandas dataframe containing county-level data
-    
+
     Outputs:
         A pandas dataframe containing the original data and the zip codes
           located in each county.
     '''
-    county_to_zip = pd.read_excel('raw_data/COUNTY_ZIP_122016.xlsx')
-    county_to_zip.columns = [col.lower() for col in county_to_zip.columns]
-    return data.merge(county_to_zip, how='left', on='county')
+    county_zip_map = pd.read_excel('raw_data/COUNTY_ZIP_122016.xlsx')
+    county_zip_map.columns = [col.lower() for col in county_zip_map.columns]
+    return data.merge(county_zip_map, how='left', on='county')
 
 
 def clean_pres_data():
@@ -38,7 +38,7 @@ def clean_pres_data():
 
     Inputs:
         None
-    
+
     Outputs:
         None
     '''
@@ -53,7 +53,7 @@ def clean_pres_data():
     cols_to_keep = ['state', 'zip', 'res_ratio'] + votes
     pres_data = pres_data[cols_to_keep]
     # Multiply by the fraction of the county's population that resides in a zip
-    pres_data.loc[:, votes] = pres_data[votes].multiply(pres_data['res_ratio'], 
+    pres_data.loc[:, votes] = pres_data[votes].multiply(pres_data['res_ratio'],
                                                         axis=0)
     # Sum across the counties that a zip code straddles
     pres_data = pres_data.groupby(['state', 'zip'])[votes].sum().reset_index()
@@ -61,7 +61,3 @@ def clean_pres_data():
                                                                   axis=0) * 100
     pres_data.drop(['total_votes'], axis=1, inplace=True)
     pres_data.to_csv('pres_data.csv', index=False)
-
-    # zip 39281, 7.7447 other
-    # try division and multiplication
-    # pylint for pull census and clean pres

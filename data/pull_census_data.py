@@ -7,8 +7,6 @@ To download the us module: pip install us
 
 import censusdata
 import us
-import re
-import pandas as pd
 
 var_lst = ['DP02_0016E', # mean household size
            'DP05_0005PE', # percentage of ppl under age 5
