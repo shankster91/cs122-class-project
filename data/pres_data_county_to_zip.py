@@ -33,19 +33,13 @@ def county_to_zip():
     pres_data = pres_data.merge(county_to_zip, how='left', on='county')
     cols_to_keep = ['state', 'zip', 'votes_dem', 'votes_gop', 'votes_other', 'total_votes', 'res_ratio']
     pres_data = pres_data[cols_to_keep]
-    party_votes = ['votes_dem', 'votes_gop', 'votes_other']
-    pres_data[votes] = pres_data[party_votes + ['total_votes']].multiply(pres_data['res_ratio'], axis=0)
-    # fix ak data
-    pres_data = pres_data.groupby(['state', 'zip'])[party_votes].sum()
-    # fix ak data
-    # count 33,000
-    # check total vote for accuracy          
-    pres_data[votes] = pres_data[party_votes].divide(pres_data['total_votes']) * 100
-    # check that zips in same county have same perc
-    pres_data = pres_data.drop(['total_votes'], axis=1)
-    # drop absentee, no state_po, nan zip etc.
-    data.to_csv('pres_data.csv', index=False)
-    # count 33,000
-    # examine data
-    # break up into two functions, rename file
-    # clean up code
+    votes = ['votes_dem', 'votes_gop', 'votes_other', 'total_votes']
+    pres_data.loc[:, votes] = pres_data[votes].multiply(pres_data['res_ratio'], axis=0)
+    pres_data = pres_data.groupby(['state', 'zip'])[votes].sum().reset_index()
+    party_votes = votes[:-1]
+    pres_data.loc[:, party_votes] = pres_data[party_votes].divide(pres_data['total_votes'], axis=0) * 100
+    pres_data.drop(['total_votes'], axis=1, inplace=True)
+    pres_data.to_csv('pres_data.csv', index=False)
+
+    # break up into two functions, rename file;  zip 39281, 7.7447 other
+    # clean up code, pylint for pull census and clean pres
