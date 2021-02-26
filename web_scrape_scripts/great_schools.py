@@ -5,32 +5,55 @@ Scraping GreatSchools.org for average rating of list of schools by zip code
 
 import bs4
 import requests
-import urllib3
-import certifi
 import csv
 import json
 import re
+import pandas as pd
        
-req = requests.get("https://www.greatschools.org/search/search.zipcode?sort=rating&view=table&zip=02136")
+def get_school_score(zip_code):
+    url = "https://www.greatschools.org/search/search.zipcode?sort=rating&view=table&zip=" + str(zip_code)
+    req = requests.get(url)
 
-soup2 = bs4.BeautifulSoup(req.text)
+    soup = bs4.BeautifulSoup(req.text)
 
-tag_list2 = soup2.find(id = "search-page")
+    string = str(soup.find_all("script", type = "text/javascript")[0])
 
-soup2.find(id = "Search-react-component-ad65c5fa-112b-466c-9e2b-788a1aacd3bc").find_all("section", class_ = 'school-list')
+    data_layer = string[string.find('gon.search'):]
 
+    if "Your search did not return any schools in " + str(zip_code) not in data_layer:
+        school_string = data_layer.replace('gon.search={"schools":[', "").replace(';\n//]]>\n</script>', "")
+        school_list = re.findall(r'"id":.*?"remediationData":', school_string)
 
+        total = 0
+        count = 0
+        for item in school_list:
+            json_school = json.loads("{" + item + "{}}")
+            rating = json_school['rating']
+            if isinstance(rating, int):
+                total += rating
+                count += 1
+        
+        if count != 0:
+            return total / count
+        else:
+            return 0
 
+    else:
+        return 0
+    
+def school_crawl_csv(zip_code_list, filename):
+    school_rating_list = []
+    index = 0
+    for zip_code in zip_code_list:
+        school_rating = get_school_score(str(zip_code))
+        school_rating_list.append(school_rating)
+        index += 1
 
-clean_string = str(soup2.find_all("script", type = "text/javascript")[0]).replace('<script type="text/javascript">\n//<![CDATA[\n', "").replace(";\n//]]>\n</script>","")
+        if index % 100 == 0:
+            time.sleep(1)
+            print("finished zip", zip_code)
 
+    pd_dict = {"zip": zip_code_list, "school_rating": school_rating_list}
+    df = pd.DataFrame(pd_dict)
 
-data_layer = clean_string[clean_string.find('gon.search'):]
-school_string = data_layer.replace('gon.search={"schools":[', "")
-
-re.findall(r'{"id":', school_string)
-re.search(r'{"id":[^{"id:"}]*', school_string)
-
-
-
-one_school = '''{"id":340,"districtId":99,"districtName":"Boston School District","districtCity":"Boston","levelCode":"h","lat":42.262688,"lon":-71.117836,"name":"New Mission High School","gradeLevels":"9-12","assigned":null,"address":{"street1":"655 Metropolitan Avenue","street2":"","zip":"02136","city":"Boston"},"csaAwardYears":[],"rating":6,"ratingScale":"Average","schoolType":"public","state":"MA","zipcode":"02136","type":"school","links":{"profile":"/massachusetts/boston/340-New-Mission-High-School/","reviews":"/massachusetts/boston/340-New-Mission-High-School/#Reviews","collegeSuccess":"/massachusetts/boston/340-New-Mission-High-School/#College_success"},"highlighted":false,"pinned":null,"testScoreRatingForEthnicity":null,"percentLowIncome":"63%","collegePersistentData":{"school_value":"67%","state_average":"87%"},"collegeEnrollmentData":{"school_value":"85%","state_average":"70%"},"enrollment":392,"parentRating":4,"numReviews":4,"studentsPerTeacher":14,"subratings":{"Test Scores Rating":4,"Student Progress Rating":9,"College Readiness Rating":5,"Equity Overview Rating":5},"ethnicityInfo":[{"label":"Low-income","rating":4,"percentage":63},{"label":"All students","rating":4},{"label":"African American","rating":4,"percentage":60},{"label":"Hispanic","rating":4,"percentage":35},{"label":"White","percentage":2},{"label":"Two or more races","percentage":2},{"label":"Asian","percentage":1}],"remediationData":{"Overall":[{"data_type":"Percent Needing any Remediation for College","subject":"Any Subject","school_value":"17%","state_average":"24%"}]}} '''
+    df.to_csv(filename, index = False, mode = "a", header = False)
