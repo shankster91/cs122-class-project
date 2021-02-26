@@ -8,92 +8,92 @@ To download the us module: pip install us
 import censusdata
 import us
 
-var_lst = ['DP02_0016E', # mean household size
-           'DP05_0005PE', # percentage of ppl under age 5
-           'DP05_0006PE', # percentage of ppl age 5-9
-           'DP05_0007PE', # percentage of ppl age 10-14
-           'DP05_0008PE', # percentage of ppl age 15-19
-           'DP05_0009PE', # percentage of ppl age 20-24
-           'DP05_0010PE', # percentage of ppl age 25-34
-           'DP05_0011PE', # percentage of ppl age 35-44
-           'DP05_0012PE', # percentage of ppl age 45-54
-           'DP05_0013PE', # percentage of ppl age 55-59
-           'DP05_0014PE', # percentage of ppl age 60-64
-           'DP05_0015PE', # percentage of ppl age 65-74
-           'DP05_0016PE', # percentage of ppl age 75-84
-           'DP05_0017PE', # percentage of ppl over age 85
-           'DP03_0052PE', # percentage of HHs with annual income + benefits under $10,000
-           'DP03_0053PE', # percentage of HHs with annual income + benefits $10,000-$14,999
-           'DP03_0054PE', # percentage of HHs with annual income + benefits $15,000-$24,999
-           'DP03_0055PE', # percentage of HHs with annual income + benefits $25,000-$34,999
-           'DP03_0056PE', # percentage of HHs with annual income + benefits $35,000-$49,999
-           'DP03_0057PE', # percentage of HHs with annual income + benefits $50,000-$74,999
-           'DP03_0058PE', # percentage of HHs with annual income + benefits $75,000-$99,999
-           'DP03_0059PE', # percentage of HHs with annual income + benefits $100,000-$149,999
-           'DP03_0060PE', # percentage of HHs with annual income + benefits $150,000-$199,999
-           'DP03_0061PE', # percentage of HHs with annual income + benefits over $200,000
-           'DP02_0060PE', # percentage of ppl over 25 with less than 9th grade education
-           'DP02_0061PE', # percentage of ppl over 25 with some high school
-           'DP02_0062PE', # percentage of ppl over 25 with high school diploma
-           'DP02_0063PE', # percentage of ppl over 25 with some college
-           'DP02_0064PE', # percentage of ppl over 25 with associate's degree
-           'DP02_0065PE', # percentage of ppl over 25 with bachelor's degree
-           'DP02_0066PE', # percentage of ppl over 25 with graduate degree
-           'DP03_0027PE', # percentage of ppl over 16 working in management, business, science, and arts occupations
-           'DP03_0028PE', # percentage of ppl over 16 working in service occupations
-           'DP03_0029PE', # percentage of ppl over 16 working in sales and office occupations
-           'DP03_0030PE', # percentage of ppl over 16 working in natural resources, construction, and maintenance occupations
-           'DP03_0031PE', # percentage of ppl over 16 working in production, transportation, and material moving occupations
-           'DP02_0058PE', # percentage of ppl over 3 enrolled in college or graduate school
-           'DP05_0002PE', # percentage of ppl who are male
-           'DP05_0003PE', # percentage of ppl who are female
-           'DP05_0037PE', # percentage of ppl who are white
-           'DP05_0038PE', # percentage of ppl who are Black
-           'DP05_0039PE', # percentage of ppl who are Native American
-           'DP05_0044PE', # percentage of ppl who are Asian
-           'DP05_0052PE', # percentage of ppl who are Native Hawaiian or Pacific Islander
-           'DP05_0057PE', # percentage of ppl who are of some other race
-           'DP02_0125PE', # percentage of ppl who are of Arab ancestry
-           'DP05_0071PE', # percentage of ppl who are of Hispanic ancestry
-           'DP02_0088PE', # percentage of ppl who are native born
-           'DP02_0093PE', # percentage of ppl who are foreign born
-           'DP02_0112PE', # percentage of ppl who speak English at home
-           'DP02_0115PE', # percentage of ppl who speak Spanish at home
-           'DP02_0026PE', # percentage of males over 15 who have never been married
-           'DP02_0027PE', # percentage of males over 15 who are married
-           'DP02_0028PE', # percentage of males over 15 who are separated
-           'DP02_0029PE', # percentage of males over 15 who are widowed
-           'DP02_0030PE', # percentage of males over 15 who are divorced
-           'DP02_0032PE', # percentage of females over 15 who have never been married
-           'DP02_0033PE', # percentage of females over 15 who are married
-           'DP02_0034PE', # percentage of females over 15 who are separated
-           'DP02_0035PE', # percentage of females over 15 who are widowed
-           'DP02_0036PE', # percentage of females over 15 who are divorced
-           'DP03_0119PE', # percentage of HHs below poverty level
-           'DP02_0153PE', # percentage of HHs with an Internet subscription
-           'DP04_0046PE', # percentage of housing units that are owner-occupied
-           'DP04_0047PE', # percentage of housing units that are renter-occupied
-           'DP04_0003PE', # percentage of housing units that are vacant
-           'DP03_0097PE', # percentage of ppl with private health insurance
-           'DP03_0098PE', # percentage of ppl with public health insurance
-           'DP03_0099PE', # percentage of ppl with no health insurance
-           'DP04_0141PE', # percentage of HHs putting 30-34.9% of their income toward rent
-           'DP04_0142PE', # percentage of HHs putting more than 35% of their income toward rent
-           'DP03_0002PE', # percentage of ppl over 16 who are in the labor force
-           'DP03_0005PE', # percentage of ppl over 16 who are unemployed
-           'DP02_0002PE', # percentage of HHs with a married couple
-           'DP02_0004PE', # percentage of HHS with a cohabitating couple
-           'DP02_0007PE', # percentage of HHs consisting of a male householder with children
-           'DP02_0008PE', # percentage of HHs consisting of a male householder without children
-           'DP02_0011PE', # percentage of HHs consisting of a female householder with children
-           'DP02_0012PE', # percentage of HHs consisting of a female householder without children
-           'DP02_0014PE', # percentage of HHs with children
-           'DP04_0051PE', # percentage of HHers who have moved since 2017
-           'DP04_0052PE', # percentage of HHers who last moved bw 2015-2016
-           'DP04_0053PE', # percentage of HHers who last moved bw 2010-2014
-           'DP04_0054PE', # percentage of HHers who last moved bw 2000-2009
-           'DP04_0055PE', # percentage of HHers who last moved bw 1990-1999
-           'DP04_0056PE'] # percentage of HHers who last moved before 1989
+var_lst = ['DP02_0016E',
+           'DP05_0005PE',
+           'DP05_0006PE',
+           'DP05_0007PE',
+           'DP05_0008PE',
+           'DP05_0009PE',
+           'DP05_0010PE',
+           'DP05_0011PE',
+           'DP05_0012PE',
+           'DP05_0013PE',
+           'DP05_0014PE',
+           'DP05_0015PE',
+           'DP05_0016PE',
+           'DP05_0017PE',
+           'DP03_0052PE',
+           'DP03_0053PE',
+           'DP03_0054PE',
+           'DP03_0055PE',
+           'DP03_0056PE',
+           'DP03_0057PE',
+           'DP03_0058PE',
+           'DP03_0059PE',
+           'DP03_0060PE',
+           'DP03_0061PE',
+           'DP02_0060PE',
+           'DP02_0061PE',
+           'DP02_0062PE',
+           'DP02_0063PE',
+           'DP02_0064PE',
+           'DP02_0065PE',
+           'DP02_0066PE',
+           'DP03_0027PE',
+           'DP03_0028PE',
+           'DP03_0029PE',
+           'DP03_0030PE',
+           'DP03_0031PE',
+           'DP02_0058PE',
+           'DP05_0002PE',
+           'DP05_0003PE',
+           'DP05_0037PE',
+           'DP05_0038PE',
+           'DP05_0039PE',
+           'DP05_0044PE',
+           'DP05_0052PE',
+           'DP05_0057PE',
+           'DP02_0125PE',
+           'DP05_0071PE',
+           'DP02_0088PE',
+           'DP02_0093PE',
+           'DP02_0112PE',
+           'DP02_0115PE',
+           'DP02_0026PE',
+           'DP02_0027PE',
+           'DP02_0028PE',
+           'DP02_0029PE',
+           'DP02_0030PE',
+           'DP02_0032PE',
+           'DP02_0033PE',
+           'DP02_0034PE',
+           'DP02_0035PE',
+           'DP02_0036PE',
+           'DP03_0119PE',
+           'DP02_0153PE',
+           'DP04_0046PE',
+           'DP04_0047PE',
+           'DP04_0003PE',
+           'DP03_0097PE',
+           'DP03_0098PE',
+           'DP03_0099PE',
+           'DP04_0141PE',
+           'DP04_0142PE',
+           'DP03_0002PE',
+           'DP03_0005PE',
+           'DP02_0002PE',
+           'DP02_0004PE',
+           'DP02_0007PE',
+           'DP02_0008PE',
+           'DP02_0011PE',
+           'DP02_0012PE',
+           'DP02_0014PE',
+           'DP04_0051PE',
+           'DP04_0052PE',
+           'DP04_0053PE',
+           'DP04_0054PE',
+           'DP04_0055PE',
+           'DP04_0056PE']
 
 col_names = ['mean_HH_size',
              'under_age_5',
