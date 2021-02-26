@@ -18,7 +18,7 @@ def county_to_zip(data):
     Converts data from county level to zip code level.
 
     Inputs:
-        data: a pandas dataframe containing county-level data
+        A pandas dataframe containing county-level data.
 
     Outputs:
         A pandas dataframe containing the original data and the zip codes
@@ -26,7 +26,9 @@ def county_to_zip(data):
     '''
     county_zip_map = pd.read_excel('raw_data/COUNTY_ZIP_122016.xlsx')
     county_zip_map.columns = [col.lower() for col in county_zip_map.columns]
-    return data.merge(county_zip_map, how='left', on='county')
+    data = data.merge(county_zip_map, how='left', on='county')
+    data['zip'].astype('int64')
+    return data
 
 
 def clean_pres_data():
