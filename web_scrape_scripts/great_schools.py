@@ -9,6 +9,7 @@ import csv
 import json
 import re
 import pandas as pd
+import time
        
 def get_school_score(zip_code):
     url = "https://www.greatschools.org/search/search.zipcode?sort=rating&view=table&zip=" + str(zip_code)
@@ -36,12 +37,12 @@ def get_school_score(zip_code):
         if count != 0:
             return total / count
         else:
-            return 0
+            return -1
 
     else:
-        return 0
+        return -1
     
-def school_crawl_csv(zip_code_list, filename):
+def school_crawl_df(zip_code_list):
     school_rating_list = []
     index = 0
     for zip_code in zip_code_list:
@@ -51,9 +52,17 @@ def school_crawl_csv(zip_code_list, filename):
 
         if index % 100 == 0:
             time.sleep(1)
-            print("finished zip", zip_code)
+            print("finished zip", zip_code, "at index", index)
 
     pd_dict = {"zip": zip_code_list, "school_rating": school_rating_list}
     df = pd.DataFrame(pd_dict)
 
-    df.to_csv(filename, index = False, mode = "a", header = False)
+    return_df.to_csv("data/great_schools.csv")
+
+    return df
+
+zip_code_list = pd.read_csv("data/census_data.csv").loc[:,"zip"]
+
+return_df = school_crawl_df(zip_code_list)
+
+
