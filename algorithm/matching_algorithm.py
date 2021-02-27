@@ -27,7 +27,10 @@ def create_sql_query(state, zip_code):
     sql_query = '''SELECT * 
                   FROM census AS c
                   JOIN business_count AS b ON b.zip = c.zip
+                  JOIN great_schools AS g on g.zip = c.zip
                   JOIN ideology AS i ON i.zip = c.zip
+                  JOIN libraries AS l ON l.zip = c.zip
+                  JOIN museums AS m ON m.zip = c.zip
                   JOIN walk_score AS w ON w.zip = c.zip
                   WHERE c.state = ?
                   OR c.zip = ?;'''
@@ -72,21 +75,13 @@ def find_best_zips(args_from_ui):
 
 
 
-#JOIN libraries AS l ON l.libraries_zip = c.zip
-#JOIN museums AS m ON m.museums_zip = c.zip
 #JOIN zillow AS z ON z.zip = c.zip
-#JOIN great_schools AS g on g.zip = c.zip
 
-# add table names (biz counts)
-# libraries--add zero counts
-# museums--add zero counts
-# business_counts--add zero counts
-# density (3)
-# test (3)
-# pylint (4)
-
-# update db (3 + census)
+# add table names (biz counts), add zero counts, density
 # delete string variables from Zillow data
+# test (2)
+# pylint (2)
+# update db (2 + lib + museum + census)
 
 # try two types of searches (zip is not in specified state and zip is in specified state)
 # check size of joined dataset

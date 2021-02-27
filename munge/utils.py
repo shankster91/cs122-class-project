@@ -15,15 +15,18 @@ def compute_density(data):
         data: a pandas dataframe containing counts.
 
     Outputs:
-        A pandas dataframe that contains a measure of density for the
+        A pandas dataframe that contains measures of density for the
           supplied counts.
     '''
-    columns = data.columns[data.columns != 'zip']
+    columns = data.columns
+    counts = columns[columns != 'zip']
     data = data.astype('int64')
     land_area = pd.read_table('data/raw_data/zcta_land_area.txt')
     land_area.rename(columns = {'GEOID' : 'zip'}, inplace=True)
-    density_data = data.merge(land_area, how='left', on='zip')
-    return density_data[columns].divide(density_data['ALAND_SQMI'], axis=0)
+    density_data = land_area.merge(data, how='left', on='zip')
+    density_data[counts] = density_data[counts].divide(density_data['ALAND_SQMI'],
+                                                       axis=0)
+    return density_data[columns]
 
 
 def county_to_zip(data):

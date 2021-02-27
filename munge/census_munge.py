@@ -202,13 +202,15 @@ for label in data.index:
     state_code = label.geo[0][1]
     state = us.states.lookup(state_code) # convert the FIPS codes to state postal codes
     state_abbrs.append(state.abbr)
-    zip_code = label.geo[1][1]
+    zip_code = int(label.geo[1][1])
     zip_codes.append(zip_code)
 data.insert(0, 'state', state_abbrs)
 data.insert(1, 'zip', zip_codes)
 data.reset_index(drop=True, inplace=True)
 
-data['census_pop_density'] = utils.compute_density(data[['zip', 'census_total_pop']])
+pop_density_data = utils.compute_density(data[['zip', 'census_total_pop']])
+pop_density_data.columns = ['zip', 'census_pop_density']
+data = data.merge(pop_density_data, how='left', on='zip')
 data.drop('census_total_pop', axis=1, inplace=True)
 
 data.to_csv('data/census_data.csv', index=False)
