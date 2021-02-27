@@ -72,13 +72,22 @@ def find_best_zips(args_from_ui):
 
 
 
-#JOIN libraries AS l ON l.zip = c.zip
-#JOIN museums AS m ON m.zip = c.zip
+#JOIN libraries AS l ON l.libraries_zip = c.zip
+#JOIN museums AS m ON m.museums_zip = c.zip
 #JOIN zillow AS z ON z.zip = c.zip
-# libraries to counts--and zero counts
-# museums to counts--and zero counts
-# business_counts zero counts
-# delete unecessary variables from Zillow data
+#JOIN great_schools AS g on g.zip = c.zip
+
+# add table names (biz counts)
+# libraries--add zero counts
+# museums--add zero counts
+# business_counts--add zero counts
+# density (3)
+# test (3)
+# pylint (4)
+
+# update db (3)
+# delete string variables from Zillow data
+
 # try two types of searches (zip is not in specified state and zip is in specified state)
 # check size of joined dataset
 # del duplicate columns
