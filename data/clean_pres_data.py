@@ -27,7 +27,6 @@ def county_to_zip(data):
     county_zip_map = pd.read_excel('raw_data/COUNTY_ZIP_122016.xlsx')
     county_zip_map.columns = [col.lower() for col in county_zip_map.columns]
     data = data.merge(county_zip_map, how='left', on='county')
-    data['zip'].astype('int64')
     return data
 
 
@@ -61,5 +60,5 @@ def clean_pres_data():
     pres_data = pres_data.groupby(['state', 'zip'])[votes].sum().reset_index()
     pres_data.loc[:, party_votes] = pres_data[party_votes].divide(pres_data['total_votes'],
                                                                   axis=0) * 100
-    pres_data.drop(['total_votes'], axis=1, inplace=True)
+    pres_data.drop('total_votes', axis=1, inplace=True)
     pres_data.to_csv('pres_data.csv', index=False)

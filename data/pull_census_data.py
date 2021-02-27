@@ -7,8 +7,10 @@ To download the us module: pip install us
 
 import censusdata
 import us
+import compute_density
 
-var_lst = ['DP02_0016E',
+var_lst = ['DP05_0001E',
+           'DP02_0016E',
            'DP05_0005PE',
            'DP05_0006PE',
            'DP05_0007PE',
@@ -95,7 +97,8 @@ var_lst = ['DP02_0016E',
            'DP04_0055PE',
            'DP04_0056PE']
 
-col_names = ['mean_HH_size',
+col_names = ['total_pop',
+             'mean_HH_size',
              'under_age_5',
              'age_5-9',
              'age_10-14',
@@ -210,4 +213,6 @@ def pull_census_data():
     data.insert(0, 'state', state_abbrs)
     data.insert(1, 'zip', zip_codes)
     data.reset_index(drop=True, inplace=True)
+    data['pop_density'] = compute_density.compute_density(data[['zip', 'total_pop']])
+    data.drop('total_pop', axis=1, inplace=True)
     data.to_csv('census_data.csv', index=False)
