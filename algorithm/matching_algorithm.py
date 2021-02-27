@@ -69,7 +69,7 @@ def find_best_zips(args_from_ui):
     start_zip_data = data[data['zip'] == zip_code] # put this in the class?
     zip_data = data[data['zip'] != zip_code] # put this in the class?
 
-    # find best zips, with weights on diff aspects, average across dist, average across table, deal with nas
+    # find best zips, normalize the scale of all variables, weights on diff tables, average across dist, average across table, deal with nas
     return data # edit return value
 
 
@@ -77,13 +77,16 @@ def find_best_zips(args_from_ui):
 #JOIN zillow AS z ON z.zip = c.zip
 
 # add table names (biz counts), add zero counts, density
-# delete string variables from Zillow data
-# test (2)
-# pylint (2)
-# update db (2 + census)
+# test
+# pylint
+# update db, then send message
+
+# try using (zip)
 
 # try two types of searches (zip is not in specified state and zip is in specified state)
 # check size of joined dataset
 # del duplicate columns
+
+# in orig algorithm, scale all variables to normalize
 
 # pylint, git, close ssh
