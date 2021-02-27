@@ -10,7 +10,7 @@ To download the us module: pip install us
 
 import censusdata
 import us
-import utils
+from munge import utils
 
 
 var_lst = ['DP05_0001E',
@@ -194,6 +194,7 @@ data = censusdata.download('acs5', 2019,
                                             ('zip code tabulation area', '*')]),
                            var_lst, tabletype='profile')
 data.columns = col_names
+data = data.add_prefix('census_')
 
 zip_codes = []
 state_abbrs = []
@@ -207,8 +208,7 @@ data.insert(0, 'state', state_abbrs)
 data.insert(1, 'zip', zip_codes)
 data.reset_index(drop=True, inplace=True)
 
-data['pop_density'] = utils.compute_density(data[['zip', 'total_pop']])
-data.drop('total_pop', axis=1, inplace=True)
+data['census_pop_density'] = utils.compute_density(data[['zip', 'census_total_pop']])
+data.drop('census_total_pop', axis=1, inplace=True)
 
-data = data.add_prefix('census_')
-data.to_csv('../data/census_data.csv', index=False)
+data.to_csv('data/census_data.csv', index=False)

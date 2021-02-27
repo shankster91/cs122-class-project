@@ -85,7 +85,7 @@ def find_best_zips(args_from_ui):
 # test (3)
 # pylint (4)
 
-# update db (3)
+# update db (3 + census)
 # delete string variables from Zillow data
 
 # try two types of searches (zip is not in specified state and zip is in specified state)

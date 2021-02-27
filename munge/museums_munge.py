@@ -12,6 +12,6 @@ museums2 = museums_raw2.loc[:,select_cols]
 museums = museums1.append(museums2)
 
 count = pd.Series(museums.squeeze().values.ravel()).value_counts()
-museums_csv = pd.DataFrame({'museums_zip': count.index, 'museums_count':count.values})
+museums_csv = pd.DataFrame({'zip': count.index, 'museums_count':count.values})
 
 museums_csv.to_csv("data/museums_zipcode.csv")

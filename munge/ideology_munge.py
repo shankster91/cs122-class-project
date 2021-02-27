@@ -14,10 +14,10 @@ To download the openpyxl module: pip install openpyxl
 '''
 
 import pandas as pd
-import utils
+from munge import utils
 
 
-data = pd.read_csv('../data/raw_data/2016_US_County_Level_Presidential_Results.csv')
+data = pd.read_csv('data/raw_data/2016_US_County_Level_Presidential_Results.csv')
 data.rename(columns = {'combined_fips' : 'county'}, inplace=True)
 data['votes_other'] = data['total_votes'] - data['votes_dem'] - data['votes_gop']
 
@@ -36,4 +36,4 @@ data = data.groupby(['zip'])[votes].sum().reset_index()
 data.loc[:, party_votes] = data[party_votes].divide(data['total_votes'], axis=0) * 100
 data.drop('total_votes', axis=1, inplace=True)
 
-data.to_csv('../data/ideology_data.csv', index=False)
+data.to_csv('data/ideology_data.csv', index=False)
