@@ -29,7 +29,6 @@ def create_sql_query(state, zip_code):
                   JOIN business_count AS b ON b.zip = c.zip
                   JOIN ideology AS i ON i.zip = c.zip
                   JOIN walk_score AS w ON w.zip = c.zip
-                  JOIN zillow AS z ON z.zip = c.zip
                   WHERE c.state = ?
                   OR c.zip = ?;'''
     arg_lst = (state, zip_code)
@@ -61,21 +60,25 @@ def find_best_zips(args_from_ui):
     data = pd.read_sql_query(sql_query, conn, params=args)
     conn.close()
 
-    data = data.loc[:,~data.columns.duplicated()] # maybe there's a better way to do this?
+    data = data.loc[:, ~data.columns.duplicated()] # maybe there's a better way to do this?
+    data.drop('state', axis=1, inplace=True) # warning
+    data = data.apply(pd.to_numeric)
+    start_zip_data = data[data['zip'] == zip_code] # put this in the class?
+    zip_data = data[data['zip'] != zip_code] # put this in the class?
 
-    # convert data to int
-    start_zip_data  # put this in the class?
-    zip_data  # put this in the class?
     # group variables by table?
     # find best zips, with weights on diff aspects
     return data # edit return value
 
 
+
 #JOIN libraries AS l ON l.zip = c.zip
 #JOIN museums AS m ON m.zip = c.zip
+#JOIN zillow AS z ON z.zip = c.zip
 # libraries to counts--and zero counts
 # museums to counts--and zero counts
 # business_counts zero counts
+# delete unecessary variables from Zillow data
 # try two types of searches (zip is not in specified state and zip is in specified state)
 # check size of joined dataset
 # del duplicate columns
