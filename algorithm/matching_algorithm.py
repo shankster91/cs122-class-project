@@ -8,6 +8,7 @@ codes in that state that are most similar to the user-specified zip code
 
 import math
 import sqlite3
+import pandas as pd
 
 
 def create_sql_query(state, zip_code):
@@ -27,8 +28,6 @@ def create_sql_query(state, zip_code):
                   FROM census AS c
                   JOIN business_count AS b ON b.zip = c.zip
                   JOIN ideology AS i ON i.zip = c.zip
-                  JOIN libraries AS l ON l.zip = c.zip
-                  JOIN museums AS m ON m.zip = c.zip
                   JOIN walk_score AS w ON w.zip = c.zip
                   JOIN zillow AS z ON z.zip = c.zip
                   WHERE c.state = ?
@@ -53,21 +52,27 @@ def find_best_zips(args_from_ui):
         ('state' not in args_from_ui):
         return [(None, math.inf)] * 5
     # add assert statement like in PA3?
+
+    state = args_from_ui['state']
+    zip_code = args_from_ui['zip']
+
     conn = sqlite3.connect('../zip_db.sqlite3')
-    sql_query, args = create_sql_query(args_from_ui['state'], args_from_ui['zip'])
-    cursor = conn.cursor()
-    r = cursor.execute(sql_query, args)
-    zip_data = r.fetchall()
-    # header = get_header(cursor)
+    sql_query, args = create_sql_query(state, zip_code)
+    data = pd.read_sql_query(sql_query, conn, params=args)
     conn.close()
 
-    # separate data in zip_data and start_zip_data, eliminate the specifid zip code from the output list
+    data = data.loc[:,~data.columns.duplicated()] # maybe there's a better way to do this?
+
+    # convert data to int
+    start_zip_data  # put this in the class?
+    zip_data  # put this in the class?
     # group variables by table?
     # find best zips, with weights on diff aspects
-    return zip_data # edit return value
+    return data # edit return value
 
 
-
+#JOIN libraries AS l ON l.zip = c.zip
+#JOIN museums AS m ON m.zip = c.zip
 # libraries to counts--and zero counts
 # museums to counts--and zero counts
 # business_counts zero counts
@@ -75,5 +80,4 @@ def find_best_zips(args_from_ui):
 # check size of joined dataset
 # del duplicate columns
 
-# add new census data to db
 # pylint, git, close ssh
