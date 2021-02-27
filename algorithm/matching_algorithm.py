@@ -69,8 +69,7 @@ def find_best_zips(args_from_ui):
     start_zip_data = data[data['zip'] == zip_code] # put this in the class?
     zip_data = data[data['zip'] != zip_code] # put this in the class?
 
-    # group variables by table?
-    # find best zips, with weights on diff aspects
+    # find best zips, with weights on diff aspects, average across dist, average across table, deal with nas
     return data # edit return value
 
 
@@ -81,7 +80,7 @@ def find_best_zips(args_from_ui):
 # delete string variables from Zillow data
 # test (2)
 # pylint (2)
-# update db (2 + lib + museum + census)
+# update db (2 + census)
 
 # try two types of searches (zip is not in specified state and zip is in specified state)
 # check size of joined dataset
