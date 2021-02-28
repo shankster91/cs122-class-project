@@ -108,9 +108,11 @@ def get_counts(columns): # maybe this should be done only once (i.e. not every t
         for table in table_counts.keys():
             if col.startswith(table):
                 table_counts[table] += 1
+                break
         for var in dist_counts:
             if re.search(var, col):
                 dist_counts[var] += 1
+                break
     return (table_counts, dist_counts)
 
 
