@@ -83,24 +83,35 @@ def create_sql_query(state, start_zip):
     return (sql_query, arg_lst)
 
 
-def get_table_counts(columns): # maybe this should be done only once (i.e. not every time the user searches)
+def get_counts(columns): # maybe this should be done only once (i.e. not every time the user searches)
     '''
-    Count the number of variables from each table.
+    Count the number of variables from each table and the number of bins in
+    each Census distribution.
 
     Inputs:
         columns: a pandas index object containing strings that represent the
           column/variable names of the data.
     
     Outputs:
-        table_counts: a dictionary containing the variable counts for each table.
+        (table_counts, dist_counts): a tuple containing (1) a dictionary of
+          variable counts for each table, and (2) a dictionary of bin counts for
+          each Census distribution.
     '''
     table_counts = {'census' : 0, 'biz' : 0, 'school' : 0, 'votes' : 0,
                     'libraries' : 0, 'museums' : 0, 'walk' : 0, 'property' : 0}
+    dist_counts = {'age_' : 0, 'sex': 0, 'educ' : 0, 'income' : 0,
+                   'occupation' : 0, 'marital' : 0, 'race' : 0, 'ethnicity' : 0,
+                   'language' : 0, 'birth_place' : 0, 'health' : 0,
+                   'housing_insecure' : 0, 'occupied_housing': 0, 'HH_type' : 0,
+                   'last_move' : 0}
     for col in columns:
-        for name in table_counts.keys():
-            if col.startswith(name):
-                table_counts[name] += 1
-    return table_counts
+        for table in table_counts.keys():
+            if col.startswith(table):
+                table_counts[table] += 1
+        for var in dist_counts:
+            if re.search(var, col):
+                dist_counts[var] += 1
+    return (table_counts, dist_counts)
 
 
 def find_best_zips(args_from_ui):
@@ -122,7 +133,7 @@ def find_best_zips(args_from_ui):
 
     zip_info = zipInfo(args_from_ui)
 
-    table_counts = get_table_counts(zip_info.columns)
+    table_counts, dist_counts = get_counts(zip_info.columns) # test
     #for zip_code, row in zip_info.data.iterrows():
     #    zip_info.compute_sq_diff(row)
     # find best zips, normalize the scale of all variables, weights on diff tables, average across dist, average across table, deal with nas
@@ -131,6 +142,8 @@ def find_best_zips(args_from_ui):
     #return start_zip_info.best_zips
 
 
+
+# update census codebook with new var names
 
 # add table names (biz counts), add zero counts, density
 # test
