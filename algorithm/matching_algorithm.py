@@ -26,12 +26,13 @@ def create_sql_query(state, zip_code):
     '''
     sql_query = '''SELECT * 
                   FROM census AS c
-                  JOIN business_count AS b ON b.zip = c.zip
-                  JOIN great_schools AS g on g.zip = c.zip
-                  JOIN ideology AS i ON i.zip = c.zip
-                  JOIN libraries AS l ON l.zip = c.zip
-                  JOIN museums AS m ON m.zip = c.zip
-                  JOIN walk_score AS w ON w.zip = c.zip
+                  JOIN business_count USING (zip)
+                  JOIN great_schools USING (zip)
+                  JOIN ideology USING (zip)
+                  JOIN libraries USING (zip)
+                  JOIN museums USING (zip)
+                  JOIN walk_score USING (zip)
+                  JOIN zillow USING (zip)
                   WHERE c.state = ?
                   OR c.zip = ?;'''
     arg_lst = (state, zip_code)
@@ -63,8 +64,7 @@ def find_best_zips(args_from_ui):
     data = pd.read_sql_query(sql_query, conn, params=args)
     conn.close()
 
-    data = data.loc[:, ~data.columns.duplicated()] # maybe there's a better way to do this?
-    data.drop('state', axis=1, inplace=True) # warning
+    data.drop('state', axis=1, inplace=True)
     data = data.apply(pd.to_numeric)
     start_zip_data = data[data['zip'] == zip_code] # put this in the class?
     zip_data = data[data['zip'] != zip_code] # put this in the class?
@@ -74,18 +74,13 @@ def find_best_zips(args_from_ui):
 
 
 
-#JOIN zillow AS z ON z.zip = c.zip
-
 # add table names (biz counts), add zero counts, density
 # test
 # pylint
 # update db, then send message
 
-# try using (zip)
-
 # try two types of searches (zip is not in specified state and zip is in specified state)
-# check size of joined dataset
-# del duplicate columns
+# check size of joined dataset without WHERE statement
 
 # in orig algorithm, scale all variables to normalize
 
