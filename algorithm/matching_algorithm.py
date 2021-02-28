@@ -29,7 +29,7 @@ class zipInfo(object):
         state = args_from_ui['state']
         start_zip = args_from_ui['zip']
         data = pull_data(state, start_zip)
-        self.columns = data.columns
+        self.col_names = data.columns
         self.start_zip_data = data[data['zip'] == start_zip]
         self.data = data[data['zip'] != start_zip]
         self.best_zips = [(None, math.inf)] * 5
@@ -83,13 +83,13 @@ def create_sql_query(state, start_zip):
     return (sql_query, arg_lst)
 
 
-def get_counts(columns): # maybe this should be done only once (i.e. not every time the user searches)
+def get_counts(col_names): # maybe this should be done only once (i.e. not every time the user searches)
     '''
     Count the number of variables from each table and the number of bins in
     each Census distribution.
 
     Inputs:
-        columns: a pandas index object containing strings that represent the
+        col_names: a pandas index object containing strings that represent the
           column/variable names of the data.
     
     Outputs:
@@ -104,7 +104,7 @@ def get_counts(columns): # maybe this should be done only once (i.e. not every t
                    'language' : 0, 'birth_place' : 0, 'health' : 0,
                    'housing_insecure' : 0, 'occupied_housing': 0, 'HH_type' : 0,
                    'last_move' : 0}
-    for col in columns:
+    for col in col_names:
         for table in table_counts.keys():
             if col.startswith(table):
                 table_counts[table] += 1
@@ -135,8 +135,8 @@ def find_best_zips(args_from_ui):
 
     zip_info = zipInfo(args_from_ui)
 
-    table_counts, dist_counts = get_counts(zip_info.columns) # test
-    #for zip_code, row in zip_info.data.iterrows():
+    table_counts, dist_counts = get_counts(zip_info.col_names) # test
+    #for zip_code, row in zip_info.data.iterrows(): # use apply instead!
     #    zip_info.compute_sq_diff(row)
     # find best zips, normalize the scale of all variables, weights on diff tables, average across dist, average across table, deal with nas
 
