@@ -147,16 +147,9 @@ def find_best_zips(args_from_ui):
 
 
 
-# awaiting reponse from Caroline about business data
-# biz counts: add zero counts, density
-# pylint
-# update db
-
 # try two types of searches (zip is not in specified state and zip is in specified state)
-# check size of joined dataset without WHERE statement
 # look at data for a zip
-# count missing data for each var (-1, -6..., NaN)
-# message
+# count missing data for each var (-1, -6..., NaN) without WHERE statement
 
 # in orig algorithm, scale all variables to normalize
 # use apply instead of loops
