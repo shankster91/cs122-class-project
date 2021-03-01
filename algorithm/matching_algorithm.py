@@ -135,7 +135,7 @@ def find_best_zips(args_from_ui):
 
     zip_info = zipInfo(args_from_ui)
 
-    table_counts, dist_counts = get_counts(zip_info.col_names) # test
+    table_counts, dist_counts = get_counts(zip_info.col_names) # edit and test
     #for zip_code, row in zip_info.data.iterrows(): # use apply instead!
     #    zip_info.compute_sq_diff(row)
     # find best zips, normalize the scale of all variables, weights on diff tables, average across dist, average across table, deal with nas
@@ -147,16 +147,21 @@ def find_best_zips(args_from_ui):
 
 # update census codebook with new var names
 
+# awaiting reponse from Caroline about business data
 # add table names (biz counts), add zero counts, density
 # test
 # pylint
-# update db, then send message
+# update db
 
-# try two types of searches (zip is not in specified state and zip is in specified state)
+# pull weather
+
+# try two types of searches (zip is not in specified state and zip is in specified state), look at data for a zip, count missing data for each var
 # check size of joined dataset without WHERE statement
+# message
 
 # in orig algorithm, scale all variables to normalize
-# comments
+# use apply instead of loops
+# look at comments
 
 # pylint, git, close ssh
 
