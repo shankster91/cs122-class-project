@@ -76,6 +76,7 @@ def create_sql_query(state, start_zip):
                   JOIN libraries USING (zip)
                   JOIN museums USING (zip)
                   JOIN walk_score USING (zip)
+                  JOIN weather USING (zip)
                   JOIN zillow USING (zip)
                   WHERE c.state = ?
                   OR c.zip = ?;'''
@@ -97,8 +98,9 @@ def get_counts(col_names): # maybe this should be done only once (i.e. not every
           variable counts for each table, and (2) a dictionary of bin counts for
           each Census distribution.
     '''
-    table_counts = {'census' : 0, 'biz' : 0, 'school' : 0, 'votes' : 0,
-                    'libraries' : 0, 'museums' : 0, 'walk' : 0, 'property' : 0}
+    table_counts = {'census' : 0, 'business' : 0, 'school' : 0, 'votes' : 0,
+                    'libraries' : 0, 'museums' : 0, 'walk' : 0, 'weather': 0,
+                    'property' : 0}
     dist_counts = {'age_' : 0, 'sex': 0, 'educ' : 0, 'income' : 0,
                    'occupation' : 0, 'marital' : 0, 'race' : 0, 'ethnicity' : 0,
                    'language' : 0, 'birth_place' : 0, 'health' : 0,
@@ -135,7 +137,7 @@ def find_best_zips(args_from_ui):
 
     zip_info = zipInfo(args_from_ui)
 
-    table_counts, dist_counts = get_counts(zip_info.col_names) # edit and test
+    table_counts, dist_counts = get_counts(zip_info.col_names)
     #for zip_code, row in zip_info.data.iterrows(): # use apply instead!
     #    zip_info.compute_sq_diff(row)
     # find best zips, normalize the scale of all variables, weights on diff tables, average across dist, average across table, deal with nas
@@ -145,18 +147,15 @@ def find_best_zips(args_from_ui):
 
 
 
-# update census codebook with new var names
-
 # awaiting reponse from Caroline about business data
-# add table names (biz counts), add zero counts, density
-# test
+# biz counts: add zero counts, density
 # pylint
 # update db
 
-# pull weather
-
-# try two types of searches (zip is not in specified state and zip is in specified state), look at data for a zip, count missing data for each var
+# try two types of searches (zip is not in specified state and zip is in specified state)
 # check size of joined dataset without WHERE statement
+# look at data for a zip
+# count missing data for each var (-1, -6..., NaN)
 # message
 
 # in orig algorithm, scale all variables to normalize
@@ -189,38 +188,8 @@ def find_best_zips(args_from_ui):
         start_zip_data = self.data.squeeze()
         zip_data = zip_data.squeeze()
         for col in zip_data.index:
-            if re.search('age_', col):
-                n = 13 # maybe instead we could do a findall on var_lst, and take the length
-            elif re.search('income', col):
-                n = 10
-            elif re.search('educ', col):
-                n = 7
-            elif re.search('occupations', col):
-                n = 5
-            elif re.search('race', col):
-                n = 6
-            elif re.search('ethnicity', col):
-                n = 2
-            elif re.search('born', col):
-                n = 2
-            elif re.search('language', col):
-                n = 2
-            elif re.search('males', col):
-                n = 10
-            elif re.search('housing_', col):
-                n = 2
-            elif re.search('housing', col):
-                n = 3
-            elif re.search('health', col):
-                n = 3
-            elif re.search('struct', col):
-                n = 6
-            elif re.search('male', col):
-                n = 2
-            elif re.search('HHer', col):
-                n = 6
-            else:
-                n = 1
+            #else:
+            #    n = 1
             if re.search('size', col):
                 sq_diff += ((zip_data[col] - start_zip_data[col]) * 5.5310) ** 2 / (22 * n) # normalize to put the difference in HH size on a scale of 0 to 100 (5.5310 = 100 / (highest mean HH size - lowest mean HH size))
             else:

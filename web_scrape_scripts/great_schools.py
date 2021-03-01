@@ -57,7 +57,7 @@ def school_crawl_df(zip_code_list):
     pd_dict = {"zip": zip_code_list, "school_rating": school_rating_list}
     df = pd.DataFrame(pd_dict)
 
-    return_df.to_csv("data/great_schools.csv")
+    return_df.to_csv("data/great_schools.csv", index=False)
 
     return df
 
