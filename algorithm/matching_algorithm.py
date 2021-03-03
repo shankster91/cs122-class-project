@@ -49,10 +49,12 @@ def pull_data(state, start_zip):
     '''
     conn = sqlite3.connect('zip_db.sqlite3')
     sql_query, args = create_sql_query(state, start_zip)
-    data = pd.read_sql_query(sql_query, conn, params=args)
+    data = pd.read_sql(sql_query, conn, params=args)
     conn.close()
 
     data.drop('state', axis=1, inplace=True)
+    data = data.astype(dtype=float)
+
     return data.apply(pd.to_numeric)
 
 
@@ -86,36 +88,41 @@ def create_sql_query(state, start_zip):
 
 def get_counts(col_names): # maybe this should be done only once (i.e. not every time the user searches)
     '''
-    Count the number of variables from each table and the number of bins in
-    each Census distribution.
+    Count the number of columns/variables from each table and the number of bins
+    in each Census distribution.
+    Finally, subtract the total number of bins in the Census distributions from
+    the Census column count, and add back in the number of Census variables
+    that have distributions.
 
     Inputs:
         col_names: a pandas index object containing strings that represent the
           column/variable names of the data.
     
     Outputs:
-        (table_counts, dist_counts): a tuple containing (1) a dictionary of
-          variable counts for each table, and (2) a dictionary of bin counts for
-          each Census distribution.
+        (table_counts, census_dist_counts): a tuple containing (1) a dictionary
+          of variable counts for each table, and (2) a dictionary of bin counts
+          for each Census distribution.
     '''
     table_counts = {'census' : 0, 'business' : 0, 'school' : 0, 'votes' : 0,
                     'libraries' : 0, 'museums' : 0, 'walk' : 0, 'weather': 0,
                     'property' : 0}
-    dist_counts = {'age_' : 0, 'sex': 0, 'educ' : 0, 'income' : 0,
-                   'occupation' : 0, 'marital' : 0, 'race' : 0, 'ethnicity' : 0,
-                   'language' : 0, 'birth_place' : 0, 'health' : 0,
-                   'housing_insecure' : 0, 'occupied_housing': 0, 'HH_type' : 0,
-                   'last_move' : 0}
+    census_dist_counts = {'age_' : 0, 'sex': 0, 'educ' : 0, 'income' : 0,
+                          'occupation' : 0, 'marital' : 0, 'race' : 0,
+                          'ethnicity' : 0, 'language' : 0, 'birth_place' : 0,
+                          'health' : 0, 'housing_insecure' : 0,
+                          'occupied_housing': 0, 'HH_type' : 0, 'last_move' : 0}
     for col in col_names:
         for table in table_counts.keys():
             if col.startswith(table):
                 table_counts[table] += 1
                 break
-        for var in dist_counts:
-            if re.search(var, col):
-                dist_counts[var] += 1
-                break
-    return (table_counts, dist_counts)
+        if table == 'census':
+            for var in census_dist_counts:
+                if re.search(var, col):
+                    census_dist_counts[var] += 1
+                    break
+    table_counts['census'] += len(census_dist_counts) - sum(census_dist_counts.values())
+    return (table_counts, census_dist_counts)
 
 
 def find_best_zips(args_from_ui):
@@ -137,7 +144,7 @@ def find_best_zips(args_from_ui):
 
     zip_info = zipInfo(args_from_ui)
 
-    table_counts, dist_counts = get_counts(zip_info.col_names)
+    table_counts, census_dist_counts = get_counts(zip_info.col_names)
     #for zip_code, row in zip_info.data.iterrows(): # use apply instead!
     #    zip_info.compute_sq_diff(row)
     # find best zips, normalize the scale of all variables, weights on diff tables, average across dist, average across table, deal with nas
@@ -147,11 +154,7 @@ def find_best_zips(args_from_ui):
 
 
 
-# try two types of searches (zip is not in specified state and zip is in specified state)
-# look at data for a zip
-# count missing data for each var (-1, -6..., NaN) without WHERE statement
-
-# in orig algorithm, scale all variables to normalize
+# in orig algorithm, scale all variables to normalize, change denom of 88 to 23, add pop density
 # use apply instead of loops
 # look at comments
 

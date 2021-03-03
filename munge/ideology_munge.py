@@ -36,4 +36,6 @@ data = data.groupby(['zip'])[votes].sum().reset_index()
 data.loc[:, party_votes] = data[party_votes].divide(data['total_votes'], axis=0) * 100
 data.drop('total_votes', axis=1, inplace=True)
 
+data.fillna(-1, inplace=True)
+
 data.to_csv('data/ideology_data.csv', index=False)
