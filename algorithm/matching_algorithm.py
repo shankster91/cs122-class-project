@@ -26,29 +26,27 @@ class zipInfo(object):
         Inputs:
             args_from_ui: a dictionary containing the user-specified inputs.
         '''
-        state = args_from_ui['state']
+        data = pull_data(args_from_ui)
         start_zip = args_from_ui['zip']
-        data = pull_data(state, start_zip)
         self.col_names = data.columns
         self.start_zip_data = data[data['zip'] == start_zip]
         self.data = data[data['zip'] != start_zip]
         self.best_zips = [(None, math.inf)] * 5
 
 
-def pull_data(state, start_zip):
+def pull_data(args_from_ui):
     '''
     Pull zip-code-level data for the starting zip code and for all zip codes in
       the user-specified state.
 
     Inputs:
-        state: a string representing the postal abbreviation for a U.S. state.
-        start_zip: an integer representing a U.S. zip code.
+        args_from_ui: a dictionary containing the user-specified inputs
 
     Outputs:
         A pandas dataframe.
     '''
     conn = sqlite3.connect('zip_db.sqlite3')
-    sql_query, args = create_sql_query(state, start_zip)
+    sql_query, args = create_sql_query(args_from_ui)
     data = pd.read_sql(sql_query, conn, params=args)
     conn.close()
 
@@ -58,32 +56,32 @@ def pull_data(state, start_zip):
     return data.apply(pd.to_numeric)
 
 
-def create_sql_query(state, start_zip):
+def create_sql_query(args_from_ui):
     '''
-    Create the SQL query given a state and a starting zip code.
+    Create the SQL query given user-specified parameters.
 
     Inputs:
-        state: a string representing the postal abbreviation for a U.S. state.
-        start_zip: an integer representing a U.S. zip code.
+        args_from_ui: a dictionary containing the user-specified inputs
     
     Outputs:
         A tuple containing 1) a string representing a SQL query, and 2) a tuple
           containing the query's arguments.
     '''
-    sql_query = '''SELECT * 
-                  FROM census AS c
-                  JOIN business_count USING (zip)
-                  JOIN great_schools USING (zip)
-                  JOIN ideology USING (zip)
-                  JOIN libraries USING (zip)
-                  JOIN museums USING (zip)
-                  JOIN walk_score USING (zip)
-                  JOIN weather USING (zip)
-                  JOIN zillow USING (zip)
-                  WHERE c.state = ?
-                  OR c.zip = ?;'''
-    arg_lst = (state, start_zip)
-    return (sql_query, arg_lst)
+    state = args_from_ui['state']
+    start_zip = args_from_ui['zip'] # don't do this twice?
+    table_lst = args_from_ui['tables']
+
+    preamble = ' '.join(['SELECT * FROM', table_lst[0]])
+    join_statement = ''
+    if len(table_lst) > 1:
+        for table in table_lst[1:]:
+            join_statement = ' '.join([join_statement, 'JOIN', table, 'USING (zip)'])
+    conditions = 'WHERE state = ? OR zip = ?;'
+
+    sql_query = ' '.join([preamble, join_statement, conditions])
+    args = (state, start_zip)
+
+    return (sql_query, args)
 
 
 def get_counts(col_names): # maybe this should be done only once (i.e. not every time the user searches)
@@ -107,10 +105,9 @@ def get_counts(col_names): # maybe this should be done only once (i.e. not every
                     'libraries' : 0, 'museums' : 0, 'walk' : 0, 'weather': 0,
                     'property' : 0}
     census_dist_counts = {'age_' : 0, 'sex': 0, 'educ' : 0, 'income' : 0,
-                          'occupation' : 0, 'marital' : 0, 'race' : 0,
-                          'ethnicity' : 0, 'language' : 0, 'birth_place' : 0,
-                          'health' : 0, 'housing_insecure' : 0,
-                          'occupied_housing': 0, 'HH_type' : 0, 'last_move' : 0}
+                          'marital' : 0, 'race' : 0, 'language' : 0,
+                          'birth_place' : 0, 'occupied_housing': 0,
+                          'last_move' : 0}
     for col in col_names:
         for table in table_counts.keys():
             if col.startswith(table):
@@ -141,8 +138,8 @@ def find_best_zips(args_from_ui):
         ('state' not in args_from_ui):
         return [(None, math.inf)] * 5
     # add assert statement like in PA3?
-
     zip_info = zipInfo(args_from_ui)
+    
 
     table_counts, census_dist_counts = get_counts(zip_info.col_names)
     #for zip_code, row in zip_info.data.iterrows(): # use apply instead!
@@ -153,6 +150,8 @@ def find_best_zips(args_from_ui):
     #return start_zip_info.best_zips
 
 
+
+# args_from_ui = {'state' : 'OH', 'zip' : 60637, 'tables' : ['census', 'business_count', 'great_schools', 'ideology', 'libraries', 'museums', 'walk_score', 'weather', 'zillow']}
 
 # in orig algorithm, scale all variables to normalize, change denom of 88 to 23, add pop density
 # use apply instead of loops, use itertuples for dfs and iteritems for series
