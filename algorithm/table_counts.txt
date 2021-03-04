@@ -1,0 +1,1 @@
+{"census": 14, "business": 20, "school": 1, "votes": 3, "libraries": 1, "museums": 1, "walk": 1, "weather": 2, "property": 1}
