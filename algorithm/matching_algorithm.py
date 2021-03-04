@@ -1,9 +1,9 @@
 '''
-This file contains the algorithm that computes the sum of squared differences
+This file contains the algorithm that computes the average squared difference
 between the attributes of a user-specified zip code and the attributes of each
 zip code in a user-specified state. The algorithm then selects the five zip
-codes in that state that are most similar to the user-specified zip code
-(i.e. it selects the five zip codes with the smallest sum of squared differences).
+codes in that state that are most similar to the user-specified zip code (i.e.
+it selects the five zip codes with the smallest average squared difference).
 '''
 
 import re
@@ -155,7 +155,7 @@ def find_best_zips(args_from_ui):
 
 
 # in orig algorithm, scale all variables to normalize, change denom of 88 to 23, add pop density
-# use apply instead of loops
+# use apply instead of loops, use itertuples for dfs and iteritems for series
 # look at comments
 
 # pylint, git, close ssh
@@ -163,10 +163,10 @@ def find_best_zips(args_from_ui):
 
     def compute_sq_diff(self, zip_data):
         '''
-        Compute the sum of squared differences between the set of attributes for
+        Compute the average squared difference between the set of attributes for
         two zip codes. Update the zip_selector in place with the best zip code
-        matches (i.e. the zip codes that have the least sum of squared
-        differences).
+        matches (i.e. the zip codes that have the smallest average squared
+        difference).
 
         Inputs:
             zip_data: a pandas dataframe containing demographic data for a
@@ -175,11 +175,11 @@ def find_best_zips(args_from_ui):
         Output:
             None
         '''
-        _, best5_sq_diff = self.best_zips[4] # sum of squared diffs for the 5th best zip code
-        _, best4_sq_diff = self.best_zips[3] # sum of squared diffs for the 4th best zip code
-        _, best3_sq_diff = self.best_zips[2] # sum of squared diffs for the 3rd best zip code
-        _, best2_sq_diff = self.best_zips[1] # sum of squared diffs for the 2nd best zip code
-        _, best1_sq_diff = self.best_zips[0] # sum of squared diffs for the 1st best zip code
+        _, best5_sq_diff = self.best_zips[4] # average squared diff for the 5th best zip code
+        _, best4_sq_diff = self.best_zips[3] # average squared diff for the 4th best zip code
+        _, best3_sq_diff = self.best_zips[2] # average squared diff for the 3rd best zip code
+        _, best2_sq_diff = self.best_zips[1] # average squared diff for the 2nd best zip code
+        _, best1_sq_diff = self.best_zips[0] # average squared diff for the 1st best zip code
         sq_diff = 0
         start_zip_data = self.data.squeeze()
         zip_data = zip_data.squeeze()
