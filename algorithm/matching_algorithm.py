@@ -121,11 +121,11 @@ def find_best_zips(args_from_ui):
     zip_info = zipInfo(args_from_ui)
 
     if zip_info.start_zip_data.empty:
-        print('The specified zip code is not a valid zip code. Please input '
-              'a valid zip code.')
+        return 'The specified zip code is not a valid zip code. Please input ' \
+               'a valid zip code.'
     if zip_info.data.empty:
-        print('The specified state is not a valid state. Please input a '
-              'valid state postal abbreviation.')
+        return 'The specified state is not a valid state. Please input a ' \
+               'valid state postal abbreviation.'
 
     table_counts = get_counts('algorithm/table_counts.txt')
     census_dist_counts = get_counts('algorithm/census_dist_counts') 
