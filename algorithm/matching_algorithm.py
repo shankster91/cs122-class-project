@@ -29,6 +29,7 @@ class zipInfo(object):
         '''
         data = pull_data(args_from_ui)
         start_zip = args_from_ui['zip']
+
         self.col_names = data.columns
         self.start_zip_data = data[data['zip'] == start_zip]
         self.data = data[data['zip'] != start_zip]
@@ -113,11 +114,18 @@ def find_best_zips(args_from_ui):
         best_zips: A list of five tuples containing 1) a string representing a
           zip code, and 2) the similarity score corresponding to that zip code.
     '''
-    if (not args_from_ui) or ('zip' not in args_from_ui) or \
-        ('state' not in args_from_ui):
-        return [(None, math.inf)] * 5
+    if not args_from_ui['tables']:
+        return 'Please check at least one of the checkboxes.'
     # add assert statement like in PA3?
+
     zip_info = zipInfo(args_from_ui)
+
+    if zip_info.start_zip_data.empty:
+        print('The specified zip code is not a valid zip code. Please input '
+              'a valid zip code.')
+    if zip_info.data.empty:
+        print('The specified state is not a valid state. Please input a '
+              'valid state postal abbreviation.')
 
     table_counts = get_counts('algorithm/table_counts.txt')
     census_dist_counts = get_counts('algorithm/census_dist_counts') 
