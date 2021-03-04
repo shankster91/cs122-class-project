@@ -52,10 +52,12 @@ def pull_data(args_from_ui):
     data = pd.read_sql(sql_query, conn, params=args)
     conn.close()
 
-    data.drop('state', axis=1, inplace=True)
+    data.drop('state', axis=1, errors='ignore', inplace=True)
     data = data.astype(dtype=float)
+    # Drop rows that have NA values (indicated by -1) for all columns
+    data = data[data.drop('zip', axis=1).gt(0).any(axis=1)]
 
-    return data.apply(pd.to_numeric)
+    return data
 
 
 def create_sql_query(args_from_ui):
@@ -73,15 +75,19 @@ def create_sql_query(args_from_ui):
     start_zip = args_from_ui['zip'] # don't do this twice?
     table_lst = args_from_ui['tables']
 
-    preamble = ' '.join(['SELECT * FROM', table_lst[0]])
+    var_name_lst = []
     join_statement = ''
-    if len(table_lst) > 1:
-        for table in table_lst[1:]:
-            join_statement = ' '.join([join_statement, 'JOIN', table, 'USING (zip)'])
-    conditions = 'WHERE state = ? OR zip = ?;'
+    for table in table_lst:
+        var_name_lst.append(''.join([table, '.*']))
+        join_statement = ' '.join([join_statement, 'JOIN', table, 'USING (zip)'])
+    var_names = ', '.join(var_name_lst)
+    preamble = ' '.join(['SELECT', var_names, 'FROM census AS c'])
+    conditions = 'WHERE c.state = ? OR c.zip = ?;'
 
     sql_query = ' '.join([preamble, join_statement, conditions])
     args = (state, start_zip)
+
+    print(sql_query)
 
     return (sql_query, args)
 
