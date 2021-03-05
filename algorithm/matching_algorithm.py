@@ -12,6 +12,7 @@ import sqlite3
 import json
 import pandas as pd
 import numpy as np
+from scipy import stats
 
 
 class zipInfo(object):
@@ -30,15 +31,114 @@ class zipInfo(object):
         '''
         data = pull_data(args_from_ui)
         start_zip = args_from_ui['zip']
+        self.tables = args_from_ui['tables']
 
         self.col_names = data.columns
         self.start_zip_data = data[data['zip'] == start_zip]
         self.data = data[data['zip'] != start_zip]
         self.best_zips = [(None, math.inf)] * 5
 
-        self.table_counts = get_counts('algorithm/table_counts.txt')
-        if 'census' in tables:
-            self.census_dist_counts = get_counts('algorithm/census_dist_counts.txt')
+
+    def compute_sq_diffs(self):
+        '''
+        Loop through all of the zip codes to compute the average squared
+        difference between the attributes of that zip code and the starting zip
+        code. Update the zipInfo object in place with the best zip code matches
+        (i.e. the zip codes that have the smallest average squared difference).
+
+        Inputs:
+            None
+
+        Outputs:
+            None
+        '''
+        col_names = self.col_names
+        data = self.data
+        start_zip_data = self.start_zip_data
+        table_counts = get_counts('algorithm/table_counts.txt')
+        if 'census' in self.tables:
+            census_dist_counts = get_counts('algorithm/census_dist_counts.txt')
+        cols_w_one_var = ('school', 'zillow', 'walk_score')
+
+        for _, row in data.iterrows(): # more efficient method?
+            _, best_avg_sq_diff5 = self.best_zips[4] # average squared diff for the 5th best zip code
+            _, best_avg_sq_diff4 = self.best_zips[3] # average squared diff for the 4th best zip code
+            _, best_avg_sq_diff3 = self.best_zips[2] # average squared diff for the 3rd best zip code
+            _, best_avg_sq_diff2 = self.best_zips[1] # average squared diff for the 2nd best zip code
+            _, best_avg_sq_diff1 = self.best_zips[0] # average squared diff for the 1st best zip code
+    
+            # Adjust the number of variables and tables to take into account the
+            # presence of NANs.
+            # Weather is the only table that can have NANs for some variables both not
+            # others. Therefore, we need to count the number of NANs in the weather table.
+            num_tables = len(self.tables)
+            num_weather_vars = table_counts['weather']
+            for col in col_names: # maybe don't loop twice?
+                if col.startswith(cols_w_one_var) or col == 'votes_dem':
+                    if np.isnan(row[col] - start_zip_data[col].values[0]):
+                        num_tables -= 1
+                elif col.startswith('weather'):
+                    if np.isnan(row[col] - start_zip_data[col].values[0]):
+                        num_weather_vars -= 1
+            if num_weather_vars == 0:
+                num_tables -+ 1
+
+            avg_sq_diff = np.nan
+            for col in col_names:
+                if col != 'zip':
+                    table = col.split('_')[0]
+                    num_vars = table_counts[table]
+                    if col.startswith('weather'):
+                        num_vars = num_weather_vars
+                    num_bins = 1
+                    if table == 'census':
+                        for var in census_dist_counts:
+                            if re.search(var, col):
+                                num_bins = census_dist_counts[var]
+                    wgt = (num_vars * num_bins * num_tables)
+                    sq_diff = (row[col] - start_zip_data[col].values[0]) ** 2
+                    avg_sq_diff = np.nansum([avg_sq_diff, sq_diff * (1 / wgt)])
+                    if avg_sq_diff >= best_avg_sq_diff5:
+                        break
+            if avg_sq_diff >= best_avg_sq_diff5: # make this better, maybe put one of these loops into a func
+                continue
+            if not np.isnan(avg_sq_diff):
+                if avg_sq_diff >= best_avg_sq_diff4:
+                    index = 4
+                elif avg_sq_diff >= best_avg_sq_diff3:
+                    index = 3
+                elif avg_sq_diff >= best_avg_sq_diff2:
+                    index = 2
+                elif avg_sq_diff >= best_avg_sq_diff1:
+                    index = 1
+                else:
+                    index = 0
+                self.best_zips.pop()
+                self.best_zips.insert(index, (row['zip'], avg_sq_diff))
+        self.compute_scores()
+
+
+    def compute_scores(self):
+        '''
+        INSERT HEADER
+        '''
+        best_zip5, best_avg_sq_diff5 = self.best_zips[4]
+        best_zip4, best_avg_sq_diff4 = self.best_zips[3]
+        best_zip3, best_avg_sq_diff3 = self.best_zips[2]
+        best_zip2, best_avg_sq_diff2 = self.best_zips[1]
+        best_zip1, best_avg_sq_diff1 = self.best_zips[0]
+
+        best_score5 = 100 * (1 - stats.chi2.cdf(best_avg_sq_diff5, 1))
+        best_score4 = 100 * (1 - stats.chi2.cdf(best_avg_sq_diff4, 1))
+        best_score3 = 100 * (1 - stats.chi2.cdf(best_avg_sq_diff3, 1))
+        best_score2 = 100 * (1 - stats.chi2.cdf(best_avg_sq_diff2, 1))
+        best_score1 = 100 * (1 - stats.chi2.cdf(best_avg_sq_diff1, 1))
+
+        self.best_zips = [(best_zip1, best_score1),
+                          (best_zip2, best_score2),
+                          (best_zip3, best_score3),
+                          (best_zip4, best_score4),
+                          (best_zip5, best_score5)]
 
 
 def pull_data(args_from_ui):
@@ -83,11 +183,11 @@ def create_sql_query(args_from_ui):
     '''
     state = args_from_ui['state']
     start_zip = args_from_ui['zip'] # don't do this twice?
-    table_lst = args_from_ui['tables']
+    tables = args_from_ui['tables']
 
     var_name_lst = []
     join_statement = ''
-    for table in table_lst:
+    for table in tables:
         var_name_lst.append(''.join([table, '.*']))
         join_statement = ' '.join([join_statement, 'JOIN', table, 'USING (zip)'])
     var_names = ', '.join(var_name_lst)
@@ -98,26 +198,6 @@ def create_sql_query(args_from_ui):
     args = (state, start_zip)
 
     return (sql_query, args)
-
-
-def compute_sq_diff(row, zip_info):
-    '''
-    INSERT HEADER
-    '''
-    col_names = zip_info.columns
-    start_zip_data = zip_info.start_zip_data
-    census_dist_counts = zip_info.census_dist_counts
-    total_sq_diff = 0
-    for col in col_names:
-        if col != 'zip':
-            table = col.split('_')[0]
-            n_vars = zip_info.table_counts[table]
-            if table == 'census':
-                for var in census_dist_counts:
-                    if re.search(var, col):
-                        n_bins = census_dist_counts[var]
-            sq_diff = (row[col] - start_zip_data[col]) ** 2
-            total_sq_diff = np.nansum([total_sq_diff, sq_diff / n_vars])
 
 
 def get_counts(filename):
@@ -162,15 +242,8 @@ def find_best_zips(args_from_ui):
         return 'The specified state is not a valid state. Please input a ' \
                'valid state postal abbreviation.'
 
-
-
-    zip_info.data.apply(compute_sq_diffs(zip_info))
-    #for zip_code, row in zip_info.data.iterrows(): # use apply instead!
-    #    zip_info.compute_sq_diff(row)
-    # Change denom of average with NAs
-
-    return zip_info.data
-    #return start_zip_info.best_zips
+    zip_info.compute_sq_diffs()
+    return zip_info.best_zips
 
 
 
@@ -181,48 +254,3 @@ def find_best_zips(args_from_ui):
 # look at comments
 
 # pylint, git, close ssh
-
-
-    def compute_sq_diff_old(self, zip_data):
-        '''
-        Compute the average squared difference between the set of attributes for
-        two zip codes. Update the zip_selector in place with the best zip code
-        matches (i.e. the zip codes that have the smallest average squared
-        difference).
-
-        Inputs:
-            zip_data: a pandas dataframe containing demographic data for a
-              specific zip code.
-
-        Output:
-            None
-        '''
-        _, best5_sq_diff = self.best_zips[4] # average squared diff for the 5th best zip code
-        _, best4_sq_diff = self.best_zips[3] # average squared diff for the 4th best zip code
-        _, best3_sq_diff = self.best_zips[2] # average squared diff for the 3rd best zip code
-        _, best2_sq_diff = self.best_zips[1] # average squared diff for the 2nd best zip code
-        _, best1_sq_diff = self.best_zips[0] # average squared diff for the 1st best zip code
-        sq_diff = 0
-        start_zip_data = self.data.squeeze()
-        zip_data = zip_data.squeeze()
-        for col in zip_data.index:
-            #else:
-            #    n = 1
-            if re.search('size', col):
-                sq_diff += ((zip_data[col] - start_zip_data[col]) * 5.5310) ** 2 / (22 * n) # normalize to put the difference in HH size on a scale of 0 to 100 (5.5310 = 100 / (highest mean HH size - lowest mean HH size))
-            else:
-                sq_diff += (zip_data[col] - start_zip_data[col]) ** 2 / (22 * n)
-            if sq_diff >= best5_sq_diff:
-                return None
-        if sq_diff >= best4_sq_diff:
-            index = 4
-        elif sq_diff >= best3_sq_diff:
-            index = 3
-        elif sq_diff >= best2_sq_diff:
-            index = 2
-        elif sq_diff >= best1_sq_diff:
-            index = 1
-        else:
-            index = 0
-        self.best_zips.pop()
-        self.best_zips.insert(index, (zip_data.name, sq_diff))
