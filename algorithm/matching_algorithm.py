@@ -30,7 +30,7 @@ class zipInfo(object):
             args_from_ui: a dictionary containing the user-specified inputs.
         '''
         data = pull_data(args_from_ui)
-        start_zip = args_from_ui['zip']
+        start_zip = args_from_ui['input_zip']
         self.tables = args_from_ui['tables']
 
         self.col_names = data.columns
@@ -181,8 +181,8 @@ def create_sql_query(args_from_ui):
         A tuple containing 1) a string representing a SQL query, and 2) a tuple
           containing the query's arguments.
     '''
-    state = args_from_ui['state']
-    start_zip = args_from_ui['zip'] # don't do this twice?
+    state = args_from_ui['input_state']
+    start_zip = args_from_ui['input_zip'] # don't do this twice?
     tables = args_from_ui['tables']
 
     var_name_lst = []
@@ -247,10 +247,11 @@ def find_best_zips(args_from_ui):
 
 
 
-# args_from_ui = {'state' : 'OH', 'zip' : 60637, 'tables' : ['census', 'business_count', 'great_schools', 'ideology', 'libraries', 'museums', 'walk_score', 'weather', 'zillow']}
+# args_from_ui = {'input_state' : 'OH', 'input_zip' : 60637, 'tables' : ['census', 'business_count', 'great_schools', 'ideology', 'libraries', 'museums', 'walk_score', 'weather', 'zillow']}
 
 # in orig algorithm, scale all variables to normalize, change denom of 88 to 23, add pop density
 # use apply instead of loops, use itertuples for dfs and iteritems for series
 # look at comments
+# Chat with Shashank and Caroline about the scores
 
 # pylint, git, close ssh

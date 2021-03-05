@@ -14,7 +14,9 @@ table_counts = {'census' : 0, 'business' : 0, 'school' : 0, 'votes' : 0,
                 'property' : 0}
 census_dist_counts = {'age_' : 0, 'sex': 0, 'educ' : 0, 'income' : 0,
                       'marital' : 0, 'race' : 0, 'language' : 0,
-                      'birth_place' : 0, 'occupied_housing' : 0, 'last_move' : 0}
+                      'birth_place' : 0, 'HH_size' : 0, 'occupied_housing' : 0,
+                      'pop_density' : 0, 'last_move' : 0, 'unemployment' : 0,
+                      'lfpr' : 0,}
 
 conn = sqlite3.connect('zip_db.sqlite3')
 sql_query = '''SELECT * FROM census
@@ -40,10 +42,9 @@ for col in col_names:
                     census_dist_counts[var] += 1
                     break
 
-# Count the total number of Census variables by taking the number of columns,
-# subtracting the total number of bins in the Census distributions, and adding
-# back the number of Census variables that have distributions.
-table_counts['census'] += len(census_dist_counts) - sum(census_dist_counts.values())
+# Count the total number of Census variables. (The above number is not valid
+# because it counts the total number of bins, not variables.)
+table_counts['census'] = len(census_dist_counts)
 
 with open('algorithm/table_counts.txt','w') as f:
     f.write(json.dumps(table_counts))
