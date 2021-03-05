@@ -31,15 +31,14 @@ col_names = [description[0] for description in cursor.description]
 conn.close()
 
 for col in col_names:
-    for table in table_counts:
-        if col.startswith(table):
-            table_counts[table] += 1
-            break
-    if table == 'census':
-        for var in census_dist_counts:
-            if re.search(var, col):
-                census_dist_counts[var] += 1
-                break
+    table = col.split('_')[0]
+    if table != col:
+        table_counts[table] += 1
+        if table == 'census':
+            for var in census_dist_counts:
+                if re.search(var, col):
+                    census_dist_counts[var] += 1
+                    break
 
 # Count the total number of Census variables by taking the number of columns,
 # subtracting the total number of bins in the Census distributions, and adding

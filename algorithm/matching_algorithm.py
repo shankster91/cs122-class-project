@@ -11,6 +11,7 @@ import math
 import sqlite3
 import json
 import pandas as pd
+import numpy as np
 
 
 class zipInfo(object):
@@ -35,6 +36,10 @@ class zipInfo(object):
         self.data = data[data['zip'] != start_zip]
         self.best_zips = [(None, math.inf)] * 5
 
+        self.table_counts = get_counts('algorithm/table_counts.txt')
+        if 'census' in tables:
+            self.census_dist_counts = get_counts('algorithm/census_dist_counts.txt')
+
 
 def pull_data(args_from_ui):
     '''
@@ -52,12 +57,17 @@ def pull_data(args_from_ui):
     data = pd.read_sql(sql_query, conn, params=args)
     conn.close()
 
+    data = data.loc[:, ~data.columns.duplicated()] # don't call columns twice?
     data.drop('state', axis=1, errors='ignore', inplace=True)
     data = data.astype(dtype=float)
-    # Drop rows that have NA values (indicated by -1) for all columns
-    data = data[data.drop('zip', axis=1).gt(0).any(axis=1)]
+    data[data.lt(0)] = np.nan
+    data = data[(data.drop('zip', axis=1).notnull()).any(axis=1)]
 
-    return data
+    zips = data['zip']
+    data.drop('zip', axis=1, inplace=True) # warning
+    data = (data - data.mean())/data.std() # normalize
+
+    return pd.concat([zips, data], axis=1)
 
 
 def create_sql_query(args_from_ui):
@@ -87,9 +97,27 @@ def create_sql_query(args_from_ui):
     sql_query = ' '.join([preamble, join_statement, conditions])
     args = (state, start_zip)
 
-    print(sql_query)
-
     return (sql_query, args)
+
+
+def compute_sq_diff(row, zip_info):
+    '''
+    INSERT HEADER
+    '''
+    col_names = zip_info.columns
+    start_zip_data = zip_info.start_zip_data
+    census_dist_counts = zip_info.census_dist_counts
+    total_sq_diff = 0
+    for col in col_names:
+        if col != 'zip':
+            table = col.split('_')[0]
+            n_vars = zip_info.table_counts[table]
+            if table == 'census':
+                for var in census_dist_counts:
+                    if re.search(var, col):
+                        n_bins = census_dist_counts[var]
+            sq_diff = (row[col] - start_zip_data[col]) ** 2
+            total_sq_diff = np.nansum([total_sq_diff, sq_diff / n_vars])
 
 
 def get_counts(filename):
@@ -105,7 +133,7 @@ def get_counts(filename):
     '''
     with open(filename) as f: 
         counts = f.read() 
-    return json.loads(counts) 
+    return json.loads(counts)
 
 
 def find_best_zips(args_from_ui):
@@ -120,7 +148,8 @@ def find_best_zips(args_from_ui):
         best_zips: A list of five tuples containing 1) a string representing a
           zip code, and 2) the similarity score corresponding to that zip code.
     '''
-    if not args_from_ui['tables']:
+    tables = args_from_ui['tables']
+    if not tables:
         return 'Please check at least one of the checkboxes.'
     # add assert statement like in PA3?
 
@@ -133,12 +162,12 @@ def find_best_zips(args_from_ui):
         return 'The specified state is not a valid state. Please input a ' \
                'valid state postal abbreviation.'
 
-    table_counts = get_counts('algorithm/table_counts.txt')
-    census_dist_counts = get_counts('algorithm/census_dist_counts') 
 
+
+    zip_info.data.apply(compute_sq_diffs(zip_info))
     #for zip_code, row in zip_info.data.iterrows(): # use apply instead!
     #    zip_info.compute_sq_diff(row)
-    # find best zips, normalize the scale of all variables, weights on diff tables, average across dist, average across table, deal with nas
+    # Change denom of average with NAs
 
     return zip_info.data
     #return start_zip_info.best_zips
@@ -154,7 +183,7 @@ def find_best_zips(args_from_ui):
 # pylint, git, close ssh
 
 
-    def compute_sq_diff(self, zip_data):
+    def compute_sq_diff_old(self, zip_data):
         '''
         Compute the average squared difference between the set of attributes for
         two zip codes. Update the zip_selector in place with the best zip code
