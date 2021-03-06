@@ -162,7 +162,7 @@ zip_codes = []
 state_abbrs = []
 for label in data.index:
     state_code = label.geo[0][1]
-    state = us.states.lookup(state_code) # convert the FIPS codes to state postal codes
+    state = us.states.lookup(state_code) # convert FIPS to state postal codes
     state_abbrs.append(state.abbr)
     zip_code = int(label.geo[1][1])
     zip_codes.append(zip_code)
