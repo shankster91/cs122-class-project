@@ -78,17 +78,15 @@ class zipInfo(object):
               representing the number of variables from the weather table that
               have non-NAN values for the given zip code.
         '''
-        start_zip_data = self.start_zip_data
-        col_names = self.col_names
-        cols_w_one_var = ('school', 'zillow', 'walk_score')
         num_tables = len(self.tables)
         num_weather_vars = self.table_counts['weather']
-        for col in col_names:
+        cols_w_one_var = ('school', 'zillow', 'walk_score')
+        for col in self.col_names:
             if col.startswith(cols_w_one_var) or col == 'votes_dem':
-                if np.isnan(row[col] - start_zip_data[col].values[0]):
+                if np.isnan(row[col] - self.start_zip_data[col].values[0]):
                     num_tables -= 1
             elif col.startswith('weather'):
-                if np.isnan(row[col] - start_zip_data[col].values[0]):
+                if np.isnan(row[col] - self.start_zip_data[col].values[0]):
                     num_weather_vars -= 1
         if num_weather_vars == 0:
             num_tables -= 1
@@ -111,11 +109,9 @@ class zipInfo(object):
         Outputs:
             avg_sq_diff: a float representing the average squared difference.
         '''
-        col_names = self.col_names
-        start_zip_data = self.start_zip_data
-        _, best_avg_sq_diff5 = self.best_zips[4] # avg sq diff for 5th best zip
         avg_sq_diff = np.nan
-        for col in col_names:
+        _, best_avg_sq_diff5 = self.best_zips[4] # avg sq diff for 5th best zip
+        for col in self.col_names:
             if col != 'zip':
                 table = col.split('_')[0]
                 num_vars = self.table_counts[table]
@@ -128,7 +124,7 @@ class zipInfo(object):
                             num_bins = self.census_dist_counts[var]
                             break
                 wgt = (num_vars * num_bins * num_tables)
-                sq_diff = (row[col] - start_zip_data[col].values[0]) ** 2
+                sq_diff = (row[col] - self.start_zip_data[col].values[0]) ** 2
                 avg_sq_diff = np.nansum([avg_sq_diff, sq_diff * (1 / wgt)])
                 if avg_sq_diff >= best_avg_sq_diff5:
                     return None
@@ -206,6 +202,8 @@ def pull_data(args_from_ui):
     data.drop('state', axis=1, errors='ignore', inplace=True)
     data = data.astype(dtype=float)
     data[data.lt(0)] = np.nan
+
+    # Drop rows only containing NANs
     data = data[(data.drop('zip', axis=1).notnull()).any(axis=1)]
 
     zips = data['zip']
@@ -292,12 +290,6 @@ def return_best_zips(args_from_ui):
 
 
 
-# don't redefine attributes
-# test
-# No repeated code and don’t compute a value multiple times, No unnecessary objects
-# Proofread
-# Pylint
-# test
 # Chat with Shashank and Caroline about the scores, args_from_ui = {'input_state' : 'OH', 'input_zip' : 60637, 'tables' : ['census', 'business_count', 'great_schools', 'ideology', 'libraries', 'museums', 'walk_score', 'weather', 'zillow']}
 
 # OH questions: 1. Is it inefficient to access attributes of a python class multiple times? What about looking up dict keys? 2. Is it bad styple to apply a method to a df? 3. Add assert statement like in PA3?
