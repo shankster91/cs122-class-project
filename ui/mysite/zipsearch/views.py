@@ -10,6 +10,18 @@ COLUMN_NAMES = dict(
     target_state='Target State'
 )
 
+PREF_COLS = {
+    'Demographics': 'census',
+    'Business': 'business_count',
+    'Schools': 'great_schools',
+    'Political Ideology': 'ideology',
+    'Libraries': 'libraries',
+    'Museums': 'museums',
+    'Walk Score': 'walk_score',
+    'Weather': 'weather',
+    'Housing Prices': 'zillow'
+}
+
 RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
 
 def _build_dropdown(options):
@@ -28,6 +40,7 @@ def _load_res_column(filename, col=0):
 
 ZIPS = _build_dropdown(_load_res_column('zip_list.csv'))
 STATES = _build_dropdown(_load_res_column('state_list.csv'))
+PREFS = _build_dropdown(_load_res_column('pref_list.csv'))
 
 class SearchForm(forms.Form):
     zips = forms.ChoiceField(
@@ -40,12 +53,18 @@ class SearchForm(forms.Form):
         choices=STATES,
         help_text='Select a state to look for similar zip codes',
         required=False)
+    prefs = forms.MultipleChoiceField(label='Preferences',
+                                     choices=PREFS,
+                                     help_text='Select the data you would like to match on. You must choose at least one.',
+                                     widget=forms.CheckboxSelectMultiple(attrs={"checked":""}),
+                                     required=True)
 
 def index(request):
     #template = loader.get_template('zipsearch/index.html')
     #return render(request, 'zipsearch/index.html')
     #return HttpResponse(template.render(request))
     context = {}
+    args = {}
     res = None
     if request.method == 'GET':
         # create a form instance and populate it with data from the request:
@@ -54,9 +73,14 @@ def index(request):
         if form.is_valid():
 
             # Convert form data to an args dictionary for find_courses
-            args = {}
-            args['input_zip'] = form.cleaned_data['zips']
+            input_zip = form.cleaned_data['zips']
+            if input_zip != '':
+                args['input_zip'] = int(input_zip)
             args['input_state'] = form.cleaned_data['state']
+            tables = []
+            for val in form.cleaned_data['prefs']:
+                tables.append(PREF_COLS[val])
+            args['tables'] = tables
 #             if form.cleaned_data['show_args']:
 #                 context['args'] = 'args_to_ui = ' + json.dumps(args, indent=2)
 
@@ -99,5 +123,5 @@ def index(request):
     #context['columns'] = [COLUMN_NAMES.get(col, col) for col in columns]
 
     context['form'] = form
-    print(args)
+    #print(args)
     return render(request, 'zipsearch/index.html', context)

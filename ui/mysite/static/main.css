@@ -6,7 +6,7 @@ html, body {
 }
 
 div#header {
-    background: rgb(54, 6, 224);
+    background: rgb(6, 21, 224);
     margin: 0;
     padding: 0;
 }
@@ -125,6 +125,6 @@ ul.errorlist li {
 }
 
 span.helptext {
-    font-size: 11px;
+    font-size: 10px;
     color: gray;
 }
