@@ -56,8 +56,7 @@ class SearchForm(forms.Form):
     prefs = forms.MultipleChoiceField(label='Preferences',
                                      choices=PREFS,
                                      help_text='Select the data you would like to match on. You must choose at least one.',
-                                     widget=forms.CheckboxSelectMultiple(attrs={"checked":""}),
-                                     required=True)
+                                     widget=forms.CheckboxSelectMultiple(attrs={"checked":""}))
 
 def index(request):
     #template = loader.get_template('zipsearch/index.html')
@@ -68,7 +67,7 @@ def index(request):
     res = None
     if request.method == 'GET':
         # create a form instance and populate it with data from the request:
-        form = SearchForm(request.GET)
+        form = SearchForm(request.GET or None)
         # check whether it's valid:
         if form.is_valid():
 
@@ -96,8 +95,12 @@ def index(request):
 #                 """.format(e, '\n'.join(bt))
 
 #                 res = None
+        #else:
+            #raise forms.ValidationError("Select at least one preference.")
     else:
-        form = SearchForm()
+        #form = SearchForm()
+        #print("invalid")
+        pass
 
     # # Handle different responses of res
     # if res is None:
@@ -123,5 +126,5 @@ def index(request):
     #context['columns'] = [COLUMN_NAMES.get(col, col) for col in columns]
 
     context['form'] = form
-    #print(args)
+    print(args)
     return render(request, 'zipsearch/index.html', context)
