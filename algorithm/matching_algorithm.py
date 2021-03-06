@@ -6,7 +6,6 @@ zip codes in that state that are most similar to the user-specified zip code
 (i.e. the five zip codes with the smallest average squared difference).
 '''
 
-import re
 import math
 import sqlite3
 import json
@@ -113,16 +112,15 @@ class zipInfo(object):
         _, best_avg_sq_diff5 = self.best_zips[4] # avg sq diff for 5th best zip
         for col in self.col_names:
             if col != 'zip':
-                table = col.split('_')[0]
+                words = col.split('_')
+                table = words[0]
                 num_vars = self.table_counts[table]
                 if col.startswith('weather'):
                     num_vars = num_weather_vars
                 num_bins = 1
                 if table == 'census':
-                    for var in self.census_dist_counts:
-                        if re.search(var, col):
-                            num_bins = self.census_dist_counts[var]
-                            break
+                    var = words[1]
+                    num_bins = self.census_dist_counts[var]
                 wgt = (num_vars * num_bins * num_tables)
                 sq_diff = (row[col] - self.start_zip_data[col].values[0]) ** 2
                 avg_sq_diff = np.nansum([avg_sq_diff, sq_diff * (1 / wgt)])

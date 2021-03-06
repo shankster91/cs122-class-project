@@ -32,15 +32,14 @@ col_names = [description[0] for description in cursor.description]
 conn.close()
 
 for col in col_names:
-    words = col.split('_')[0]
+    words = col.split('_')
     table = words[0]
-    if table == 'census'
+    if table == 'census':
         var = words[1]
     if table != col:
         table_counts[table] += 1
         if table == 'census':
             census_dist_counts[var] += 1
-            break
 
 # Count the total number of Census variables. (The above number is not valid
 # because it counts the total number of bins, not variables.)
