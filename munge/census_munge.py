@@ -81,9 +81,9 @@ var_lst = ['DP05_0001E',
            'DP04_0055PE',
            'DP04_0056PE']
 
-col_names = ['total_pop',
-             'mean_HH_size',
-             'under_age_5',
+col_names = ['totalPop',
+             'HHsize',
+             'age_under_5',
              'age_5-9',
              'age_10-14',
              'age_15-19',
@@ -95,7 +95,7 @@ col_names = ['total_pop',
              'age_60-64',
              'age_65-74',
              'age_75-84',
-             'over_age_85',
+             'age_over_85',
              'income_under_10000',
              'income_10000-14999',
              'income_15000-24999',
@@ -120,13 +120,13 @@ col_names = ['total_pop',
              'race_native_american',
              'race_asian',
              'race_pacific_islander',
-             'other_race',
+             'race_other',
              'race_arab',
              'race_hispanic',
-             'native_birth_place',
-             'foreign_birth_place',
-             'english_language',
-             'spanish_language',
+             'birthPlace_native',
+             'birthPlace_foreign',
+             'language_english',
+             'language_spanish',
              'marital_males_never_married',
              'marital_males_married',
              'marital_males_separated',
@@ -137,17 +137,17 @@ col_names = ['total_pop',
              'marital_females_separated',
              'marital_females_widowed',
              'marital_females_divorced',
-             'owner-occupied_housing',
-             'renter-occupied_housing',
-             'unoccupied_housing',
+             'housing_owner_occupied',
+             'housing_renter_occupied',
+             'housing_unoccupied',
              'lfpr',
              'unemployment_rate',
-             'last_move_after_2017',
-             'last_move_2015-2016',
-             'last_move_2010-2014',
-             'last_move_2000-2009',
-             'last_move_1990-1999',
-             'last_move_before_1989']
+             'lastMove_after_2017',
+             'lastMove_2015-2016',
+             'lastMove_2010-2014',
+             'lastMove_2000-2009',
+             'lastMove_1990-1999',
+             'lastMove_before_1989']
 
 data = censusdata.download('acs5', 2019,
                            censusdata.censusgeo([('state', '*'),
@@ -170,9 +170,9 @@ data.insert(0, 'state', state_abbrs)
 data.insert(1, 'zip', zip_codes)
 data.reset_index(drop=True, inplace=True)
 
-pop_density_data = utils.compute_density(data[['zip', 'census_total_pop']])
-pop_density_data.columns = ['zip', 'census_pop_density']
+pop_density_data = utils.compute_density(data[['zip', 'census_totalPop']])
+pop_density_data.columns = ['zip', 'census_popDensity']
 data = data.merge(pop_density_data, how='left', on='zip')
-data.drop('census_total_pop', axis=1, inplace=True)
+data.drop('census_totalPop', axis=1, inplace=True)
 
 data.to_csv('data/census_data.csv', index=False)

@@ -80,9 +80,9 @@ class zipInfo(object):
         '''
         num_tables = len(self.tables)
         num_weather_vars = self.table_counts['weather']
-        cols_w_one_var = ('school', 'zillow', 'walk_score')
+        cols = ('school', 'zillow', 'walk_score', 'votes_dem')
         for col in self.col_names:
-            if col.startswith(cols_w_one_var) or col == 'votes_dem':
+            if col.startswith(cols):
                 if np.isnan(row[col] - self.start_zip_data[col].values[0]):
                     num_tables -= 1
             elif col.startswith('weather'):

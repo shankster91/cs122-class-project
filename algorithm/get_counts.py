@@ -5,17 +5,16 @@ Finally, both sets of counts are written to text files.
 '''
 
 import sqlite3
-import re
 import json
 
 
 table_counts = {'census' : 0, 'business' : 0, 'school' : 0, 'votes' : 0,
                 'libraries' : 0, 'museums' : 0, 'walk' : 0, 'weather' : 0,
                 'property' : 0}
-census_dist_counts = {'age_' : 0, 'sex': 0, 'educ' : 0, 'income' : 0,
+census_dist_counts = {'age' : 0, 'sex': 0, 'educ' : 0, 'income' : 0,
                       'marital' : 0, 'race' : 0, 'language' : 0,
-                      'birth_place' : 0, 'HH_size' : 0, 'occupied_housing' : 0,
-                      'pop_density' : 0, 'last_move' : 0, 'unemployment' : 0,
+                      'birthPlace' : 0, 'HHsize' : 0, 'housing' : 0,
+                      'lastMove' : 0, 'popDensity' : 0, 'unemployment' : 0,
                       'lfpr' : 0,}
 
 conn = sqlite3.connect('zip_db.sqlite3')
@@ -33,14 +32,15 @@ col_names = [description[0] for description in cursor.description]
 conn.close()
 
 for col in col_names:
-    table = col.split('_')[0]
+    words = col.split('_')[0]
+    table = words[0]
+    if table == 'census'
+        var = words[1]
     if table != col:
         table_counts[table] += 1
         if table == 'census':
-            for var in census_dist_counts:
-                if re.search(var, col):
-                    census_dist_counts[var] += 1
-                    break
+            census_dist_counts[var] += 1
+            break
 
 # Count the total number of Census variables. (The above number is not valid
 # because it counts the total number of bins, not variables.)
