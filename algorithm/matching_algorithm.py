@@ -175,8 +175,8 @@ class zipInfo(object):
         best_zips = []
         for tpl in self.best_zips:
             zip_code, avg_sq_diff = tpl
-            score = 100 * (1 - stats.chi2.cdf(avg_sq_diff, 1))
-            best_zips.append((zip_code, score))
+            score = 100 * (1 - stats.chi2.cdf(avg_sq_diff / 2, 1))
+            best_zips.append((int(zip_code), str(round(score, 1)) + '%'))
         self.best_zips = best_zips
 
 
@@ -285,13 +285,3 @@ def return_best_zips(args_from_ui):
     zip_info.data.apply(zip_info.find_best_zips, axis=1)
     zip_info.compute_scores()
     return zip_info.best_zips
-
-
-
-# Chat with Shashank and Caroline about the scores, args_from_ui = {'input_state' : 'OH', 'input_zip' : 60637, 'tables' : ['census', 'business_count', 'great_schools', 'ideology', 'libraries', 'museums', 'walk_score', 'weather', 'zillow']}
-
-# OH questions: 1. Is it inefficient to access attributes of a python class multiple times? What about looking up dict keys? 2. Is it bad styple to apply a method to a df? 3. Add assert statement like in PA3?
-
-# in orig algorithm, scale all variables to normalize, change denom of 88 to 23, add pop density
-
-# git, close ssh
