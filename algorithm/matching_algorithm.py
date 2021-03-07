@@ -121,9 +121,10 @@ class zipInfo(object):
                 if table == 'census':
                     var = words[1]
                     num_bins = self.census_dist_counts[var]
-                wgt = (num_vars * num_bins * num_tables)
+                wgt = num_vars * num_bins * num_tables
                 sq_diff = (row[col] - self.start_zip_data[col].values[0]) ** 2
-                avg_sq_diff = np.nansum([avg_sq_diff, sq_diff * (1 / wgt)])
+                if not np.isnan(sq_diff):
+                    avg_sq_diff = np.nansum([avg_sq_diff, sq_diff * (1 / wgt)])
                 if avg_sq_diff >= best_avg_sq_diff5:
                     return None
         return avg_sq_diff
