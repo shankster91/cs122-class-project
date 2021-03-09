@@ -6,8 +6,11 @@ from django import forms
 import os
 import csv
 import sys
-sys.path.insert(0, "/home/shashab/ckinnen-cschippits-shashab/algorithm")
-sys.path.insert(1, "/home/shashab/ckinnen-cschippits-shashab/zip_db.sqlite3")
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ALGO_DIR = os.path.join(BASE_DIR, 'algorithm')
+RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
+sys.path.insert(0, ALGO_DIR)
 import matching_algorithm
 
 PREF_COLS = {
@@ -21,9 +24,6 @@ PREF_COLS = {
     'Weather': 'weather',
     'Housing Prices': 'zillow'
 }
-
-RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
-print(RES_DIR)
 
 def _build_dropdown(options):
     """Convert a list to (value, caption) tuples."""

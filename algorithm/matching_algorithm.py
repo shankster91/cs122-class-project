@@ -12,6 +12,9 @@ import json
 import pandas as pd
 import numpy as np
 from scipy import stats
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class zipInfo(object):
@@ -37,9 +40,9 @@ class zipInfo(object):
         self.data = data[data['zip'] != start_zip]
         self.best_zips = [(None, math.inf)] * 5
 
-        self.table_counts = get_counts('algorithm/table_counts.txt')
+        self.table_counts = get_counts(os.path.join(BASE_DIR, 'algorithm', 'table_counts.txt'))
         if 'census' in self.tables:
-            self.census_dist_counts = get_counts('algorithm/census_dist_counts.txt')
+            self.census_dist_counts = get_counts(os.path.join(BASE_DIR, 'algorithm', 'census_dist_counts.txt'))
 
     def find_best_zips(self, row):
         '''
@@ -192,7 +195,7 @@ def pull_data(args_from_ui):
     Outputs:
         A pandas dataframe.
     '''
-    conn = sqlite3.connect('zip_db.sqlite3')
+    conn = sqlite3.connect(os.path.join(BASE_DIR, 'zip_db.sqlite3'))
     sql_query, args = create_sql_query(args_from_ui)
     data = pd.read_sql(sql_query, conn, params=args)
     conn.close()
