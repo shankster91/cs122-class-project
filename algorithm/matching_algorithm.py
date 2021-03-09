@@ -82,9 +82,9 @@ class zipInfo(object):
         '''
         num_tables = len(self.tables)
         num_weather_vars = self.table_counts['weather']
-        cols = ('school', 'zillow', 'walk_score', 'votes_dem')
+        cols_w_nan = ('school', 'zillow', 'walk_score', 'votes_dem')
         for col in self.col_names:
-            if col.startswith(cols):
+            if col.startswith(cols_w_nan):
                 if np.isnan(row[col] - self.start_zip_data[col].values[0]):
                     num_tables -= 1
             elif col.startswith('weather'):
@@ -176,12 +176,10 @@ class zipInfo(object):
         Outputs:
             None
         '''
-        best_zips = []
-        for tpl in self.best_zips:
+        for i, tpl in enumerate(self.best_zips):
             zip_code, avg_sq_diff = tpl
             score = 100 * (1 - stats.chi2.cdf(avg_sq_diff / 2, 1))
-            best_zips.append((int(zip_code), str(round(score, 1)) + '%'))
-        self.best_zips = best_zips
+            self.best_zips[i] = (int(zip_code), str(round(score, 1)) + '%')
 
 
 def pull_data(args_from_ui):
@@ -211,6 +209,9 @@ def pull_data(args_from_ui):
     zips = data['zip']
     data.drop('zip', axis=1, inplace=True)
     data = (data - data.mean())/data.std() # normalize
+    # Cap the z-scores at 4 / -4
+    data[data > 4] = 4
+    data[data < -4] = -4
 
     return pd.concat([zips, data], axis=1)
 
@@ -280,8 +281,10 @@ def return_best_zips(args_from_ui):
     zip_info = zipInfo(args_from_ui)
 
     if zip_info.start_zip_data.empty:
-        return 'The specified zip code is not a valid zip code. Please input ' \
-               'a valid zip code.'
+        return 'Either the specified zip code is not a valid zip code, or ' \
+               'there is no data available for the specified preference ' \
+               'categories for the specified zip code. Please input a valid ' \
+               'zip code or select additional preference categories.'
     if zip_info.data.empty:
         return 'The specified state is not a valid state. Please input a ' \
                'valid state postal abbreviation.'
