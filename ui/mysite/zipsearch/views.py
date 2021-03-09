@@ -42,6 +42,7 @@ def _load_res_column(filename, col=0):
 ZIPS = _build_dropdown(_load_res_column('zip_list.csv'))
 STATES = _build_dropdown(_load_res_column('state_list.csv'))
 PREFS = _build_dropdown(_load_res_column('pref_list.csv'))
+zip_results_dd = []
 
 class SearchForm(forms.Form):
     zips = forms.ChoiceField(
@@ -58,6 +59,13 @@ class SearchForm(forms.Form):
                                      choices=PREFS,
                                      help_text='Select the data you would like to match on. You must choose at least one.',
                                      widget=forms.CheckboxSelectMultiple(attrs={"checked":""}))
+
+class ResultsForm(forms.Form):
+    zips = forms.ChoiceField(
+        label='Zip Code',
+        choices=zip_results_dd,
+        #help_text='Select a zip code you want to compare to',
+        required=False)
 
 def index(request):
     #template = loader.get_template('zipsearch/index.html')
@@ -127,6 +135,17 @@ def index(request):
         context['result'] = res
     #     context['num_results'] = len(result)
         context['columns'] = columns
+        map_str = "https://www.google.com/maps/embed/v1/place?key=AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY&q=" \
+        + str(res[0][0]) + "+" + args["input_state"] + "&zoom=11"
+        context["map_str"] = map_str
+        zip_results = []
+        for tup in res:
+            zip_results.append(tup[0])
+        zip_results_dd = _build_dropdown(zip_results)
+        print(zip_results_dd)
+        form2 = ResultsForm(request.GET)
+        context['form2'] = form2
+        
 
     context['form'] = form
     #print(args)
