@@ -2,13 +2,13 @@ from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse
 from django import forms
+
 import os
 import csv
-
-COLUMN_NAMES = dict(
-    zip='Zip Code',
-    target_state='Target State'
-)
+import sys
+sys.path.insert(0, "/home/shashab/ckinnen-cschippits-shashab/algorithm")
+sys.path.insert(1, "/home/shashab/ckinnen-cschippits-shashab/zip_db.sqlite3")
+import matching_algorithm
 
 PREF_COLS = {
     'Demographics': 'census',
@@ -23,6 +23,7 @@ PREF_COLS = {
 }
 
 RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
+print(RES_DIR)
 
 def _build_dropdown(options):
     """Convert a list to (value, caption) tuples."""
@@ -83,10 +84,11 @@ def index(request):
 #             if form.cleaned_data['show_args']:
 #                 context['args'] = 'args_to_ui = ' + json.dumps(args, indent=2)
 
-#             try:
-#                 res = find_courses(args)
-#             except Exception as e:
-#                 print('Exception caught')
+            try:
+                res = matching_algorithm.return_best_zips(args)
+                print(res)
+            except Exception as e:
+                #print('Exception caught')
 #                 bt = traceback.format_exception(*sys.exc_info()[:3])
 #                 context['err'] = """
 #                 An exception was thrown in find_courses:
@@ -94,7 +96,7 @@ def index(request):
 # {}</pre>
 #                 """.format(e, '\n'.join(bt))
 
-#                 res = None
+                res = None
         #else:
             #raise forms.ValidationError("Select at least one preference.")
     else:
@@ -102,9 +104,9 @@ def index(request):
         #print("invalid")
         pass
 
-    # # Handle different responses of res
-    # if res is None:
-    #     context['result'] = None
+    # Handle different responses of res
+    if res is None:
+        context['result'] = None
     # elif isinstance(res, str):
     #     context['result'] = None
     #     context['err'] = res
@@ -114,17 +116,19 @@ def index(request):
     #     context['err'] = ('Return of find_courses has the wrong data type. '
     #                       'Should be a tuple of length 4 with one string and '
     #                       'three lists.')
-    # else:
+    else:
+        columns = ['Zip Code', '% Match']
     #     columns, result = res
 
     #     # Wrap in tuple if result is not already
     #     if result and isinstance(result[0], str):
     #         result = [(r,) for r in result]
 
-    #     context['result'] = result
+        context['result'] = res
     #     context['num_results'] = len(result)
-    #context['columns'] = [COLUMN_NAMES.get(col, col) for col in columns]
+        context['columns'] = columns
 
     context['form'] = form
-    print(args)
+    #print(args)
+    #print(res)
     return render(request, 'zipsearch/index.html', context)
