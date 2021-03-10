@@ -178,11 +178,10 @@ class zipInfo(object):
         '''
         for i, tpl in enumerate(self.best_zips):
             zip_code, avg_sq_diff = tpl
-            zip_code = str(int(zip_code))
-            if len(str(zip_code)) == 4:
-                zip_code = "0" + zip_code
+            zip_code = str(int(zip_code)).zfill(5)
             score = 100 * (1 - stats.chi2.cdf(avg_sq_diff / 2, 1))
-            self.best_zips[i] = (zip_code, str(round(score, 1)) + '%')
+            score = ''.join([str(round(score, 1)), '%'])
+            self.best_zips[i] = (zip_code, score)
 
 
 def pull_data(args_from_ui):
@@ -212,6 +211,7 @@ def pull_data(args_from_ui):
     zips = data['zip']
     data.drop('zip', axis=1, inplace=True)
     data = (data - data.mean())/data.std() # normalize
+
     # Cap the z-scores at 4 / -4
     data[data > 4] = 4
     data[data < -4] = -4
