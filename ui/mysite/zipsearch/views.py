@@ -39,17 +39,31 @@ def _load_res_column(filename, col=0):
     """Load column from resource directory."""
     return _load_column(os.path.join(RES_DIR, filename), col=col)
 
-ZIPS = _build_dropdown(_load_res_column('zip_list.csv'))
+#ZIPS = _build_dropdown(_load_res_column('zip_list.csv'))
+ZIPS = _load_res_column('zip_list.csv')
 STATES = _build_dropdown(_load_res_column('state_list.csv'))
 PREFS = _build_dropdown(_load_res_column('pref_list.csv'))
 zip_results_dd = []
 
 class SearchForm(forms.Form):
-    zips = forms.ChoiceField(
-        label='Zip Code',
-        choices=ZIPS,
-        help_text='Select a zip code you want to compare to',
-        required=False)
+#    zips = forms.ChoiceField(
+ #       label='Zip Code',
+  #      choices=ZIPS,
+   #     help_text='Select a zip code you want to compare to',
+    #    required=False)
+    zips = forms.CharField(
+        label = "Zip Code",
+        min_length = 5,
+        max_length = 5,
+        help_text = "Type in a 5 digit zip code to match")
+
+    def zip_code_list_check(self):
+        zip_entry = self.cleaned_data['zips']
+        if zip_entry not in ZIPS:
+            return False
+        else:
+            return True 
+
     state = forms.ChoiceField(
         label='Target State',
         choices=STATES,
@@ -81,71 +95,55 @@ def index(request):
         if form.is_valid():
 
             # Convert form data to an args dictionary for find_courses
-            input_zip = form.cleaned_data['zips']
-            if input_zip != '':
-                args['input_zip'] = int(input_zip)
-            args['input_state'] = form.cleaned_data['state']
-            tables = []
-            for val in form.cleaned_data['prefs']:
-                tables.append(PREF_COLS[val])
-            args['tables'] = tables
+            #input_zip = form.cleaned_data['zips']
+            #if input_zip != '':
+             #   args['input_zip'] = int(input_zip)
+
+            if form.zip_code_list_check():
+                args['input_zip'] = int(form.cleaned_data['zips'])
+                args['input_state'] = form.cleaned_data['state']
+                tables = []
+                for val in form.cleaned_data['prefs']:
+                    tables.append(PREF_COLS[val])
+                args['tables'] = tables
 #             if form.cleaned_data['show_args']:
 #                 context['args'] = 'args_to_ui = ' + json.dumps(args, indent=2)
 
-            try:
-                res = matching_algorithm.return_best_zips(args)
-                print(res)
-            except Exception as e:
-                #print('Exception caught')
-#                 bt = traceback.format_exception(*sys.exc_info()[:3])
-#                 context['err'] = """
-#                 An exception was thrown in find_courses:
-#                 <pre>{}
-# {}</pre>
-#                 """.format(e, '\n'.join(bt))
+                try:
+                    res = matching_algorithm.return_best_zips(args)
+                    print(res)
+                except Exception as e:
+                    res = None # does it ever get here?
+            else:
+                context['result'] = None
+                context['err'] = ('Either the specified zip code is not a valid zip code, or ' \
+                'there is no data available for the specified preference ' \
+                'categories for the specified zip code. Please input a valid ' \
+                'zip code or select additional preference categories.')
 
-                res = None
-        #else:
-            #raise forms.ValidationError("Select at least one preference.")
+
+        if request.method == "POST":
+            form2 = ResultsForm(request.POST or None)
+            zip_results = []
+            for tup in res: 
+                zip_results.append(tup[0])
+            zip_results_dd = _build_dropdown(zip_results)
+            context['form2'] = form2
+
     else:
-        #form = SearchForm()
-        #print("invalid")
-        pass
+        pass # does it ever get here?
 
     # Handle different responses of res
     if res is None:
         context['result'] = None
-    # elif isinstance(res, str):
-    #     context['result'] = None
-    #     context['err'] = res
-    #     result = None
-    # elif not _valid_result(res):
-    #     context['result'] = None
-    #     context['err'] = ('Return of find_courses has the wrong data type. '
-    #                       'Should be a tuple of length 4 with one string and '
-    #                       'three lists.')
     else:
         columns = ['Zip Code', '% Match']
-    #     columns, result = res
-
-    #     # Wrap in tuple if result is not already
-    #     if result and isinstance(result[0], str):
-    #         result = [(r,) for r in result]
-
         context['result'] = res
     #     context['num_results'] = len(result)
         context['columns'] = columns
         map_str = "https://www.google.com/maps/embed/v1/place?key=AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY&q=" \
         + str(res[0][0]) + "+" + args["input_state"] + "&zoom=11"
-        context["map_str"] = map_str
-        zip_results = []
-        for tup in res:
-            zip_results.append(tup[0])
-        zip_results_dd = _build_dropdown(zip_results)
-        print(zip_results_dd)
-        form2 = ResultsForm(request.GET)
-        context['form2'] = form2
-        
+        context["map_str"] = map_str  
 
     context['form'] = form
     #print(args)
