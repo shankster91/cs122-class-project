@@ -2,17 +2,21 @@ from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse
 from django import forms
+from pyzipcode import ZipCodeDatabase
 
 import os
 import csv
 import sys
 
+API_KEY = 'AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 ALGO_DIR = os.path.join(BASE_DIR, 'algorithm')
 RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
 sys.path.insert(0, ALGO_DIR)
 import matching_algorithm
 
+
+zcdb = ZipCodeDatabase()
 PREF_COLS = {
     'Demographics': 'census',
     'Business': 'business_count',
@@ -43,7 +47,6 @@ def _load_res_column(filename, col=0):
 ZIPS = _load_res_column('zip_list.csv')
 STATES = _build_dropdown(_load_res_column('state_list.csv'))
 PREFS = _build_dropdown(_load_res_column('pref_list.csv'))
-zip_results_dd = []
 
 class SearchForm(forms.Form):
 #    zips = forms.ChoiceField(
@@ -74,12 +77,6 @@ class SearchForm(forms.Form):
                                      help_text='Select the data you would like to match on. You must choose at least one.',
                                      widget=forms.CheckboxSelectMultiple(attrs={"checked":""}))
 
-class ResultsForm(forms.Form):
-    zips = forms.ChoiceField(
-        label='Zip Code',
-        choices=zip_results_dd,
-        #help_text='Select a zip code you want to compare to',
-        required=False)
 
 def index(request):
     #template = loader.get_template('zipsearch/index.html')
@@ -120,22 +117,13 @@ def index(request):
                 'there is no data available for the specified preference ' \
                 'categories for the specified zip code. Please input a valid ' \
                 'zip code or select additional preference categories.')
-
-
-        if request.method == "POST":
-            form2 = ResultsForm(request.POST or None)
-            zip_results = []
-            for tup in res: 
-                zip_results.append(tup[0])
-            zip_results_dd = _build_dropdown(zip_results)
-            context['form2'] = form2
-
     else:
         pass # does it ever get here?
 
     # Handle different responses of res
     if res is None:
         context['result'] = None
+        fin_list = []
     else:
         columns = ['Zip Code', '% Match']
         context['result'] = res
@@ -143,9 +131,20 @@ def index(request):
         context['columns'] = columns
         map_str = "https://www.google.com/maps/embed/v1/place?key=AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY&q=" \
         + str(res[0][0]) + "+" + args["input_state"] + "&zoom=11"
-        context["map_str"] = map_str  
+        context["map_str"] = map_str
+
+        fin_list = []
+        for i, tup in enumerate(res):
+              _zip, _ = tup
+              zip_cln = int(_zip.lstrip("0"))
+              zip_info = zcdb[zip_cln]
+              zip_txt = "Match #" + str(i+1) + " " + _zip
+              fin_list.append([zip_txt, zip_info.latitude, zip_info.longitude])
 
     context['form'] = form
+    context['fin_list'] = fin_list
+    #context['map'] = _map
+    #print(context['map'])
     #print(args)
     #print(res)
     return render(request, 'zipsearch/index.html', context)

@@ -128,3 +128,10 @@ span.helptext {
     font-size: 10px;
     color: gray;
 }
+
+div#map {
+    height: 900px;
+    width: 70%;
+    float: right;
+    background-color: grey;
+}

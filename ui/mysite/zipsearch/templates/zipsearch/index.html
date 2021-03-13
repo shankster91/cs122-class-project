@@ -10,15 +10,12 @@
             <h1>Zip Search</h1>
         </div>
         {% if result != None %}
-        <iframe
-        width="900"
-        height="700"
-        align="right"
-        style="border:0"
-        loading="lazy"
-        allowfullscreen
-        src={{ map_str }}>
-        </iframe>
+        <div id="map"></div>
+        <script type="text/javascript"> var fin_list = {{ fin_list|safe }};</script>
+        <script type="text/javascript" src="{% static "/index.js" %}"></script>
+        <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY&callback=initMap">
+        </script>
         {% endif %}
         <div class="frame">
             <form method="get">
@@ -59,10 +56,6 @@
                     </tr>
                     {% endfor %}
                 </table>
-                <table class="form">
-                    {{ form2 }}
-                    </table>
-                    <input type="submit" value="Submit" />
             </div>
             {% endif %}
         </div>
