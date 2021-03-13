@@ -238,12 +238,12 @@ def create_sql_query(args_from_ui):
     join_statement = ''
     for table in tables:
         var_name_lst.append(''.join([table, '.*']))
-        join_statement = ' '.join([join_statement, 'JOIN', table, 'USING (zip)'])
+        join_statement = ' '.join([join_statement, 'LEFT JOIN', table, 'USING (zip)'])
     var_names = ', '.join(var_name_lst)
-    preamble = ' '.join(['SELECT', var_names, 'FROM census AS c'])
+    select_statement = ' '.join(['SELECT', var_names, 'FROM census AS c'])
     conditions = 'WHERE c.state = ? OR c.zip = ?;'
 
-    sql_query = ' '.join([preamble, join_statement, conditions])
+    sql_query = ' '.join([select_statement, join_statement, conditions])
     args = (state, start_zip)
 
     return (sql_query, args)
