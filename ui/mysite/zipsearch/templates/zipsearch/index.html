@@ -11,7 +11,7 @@
         </div>
         {% if result != None %}
         <div id="map"></div>
-        <script type="text/javascript"> var fin_list = {{ fin_list|safe }};</script>
+        <script type="text/javascript"> var fin_list = {{ fin_list|safe }}; var bounds_list = {{ bounds_list|safe }};</script>
         <script type="text/javascript" src="{% static "/index.js" %}"></script>
         <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY&callback=initMap">
@@ -42,7 +42,7 @@
         <div class="frame">
             {% if result != None %}
             <div class="results">
-                <table class="courses">
+                <table class="zips">
                     <tr>
                         {% for col in columns %}
                         <th>{{ col }}</th>

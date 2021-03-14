@@ -56,11 +56,6 @@ label {
     font-size: 12px;
 }
 
-p.num_results {
-    margin-left: 5px;
-    font-size: 12px;
-}
-
 table.form {
     text-align: left;
 }
@@ -90,23 +85,23 @@ table.form ul#id_days li {
     padding: 0px;
 }
 
-table.courses {
+table.zips {
     border: 1px solid #ddd;
     padding: 0px;
     margin: 0px;
 }
 
-table.courses tr th {
+table.zips tr th {
     text-align: left;
 }
 
-table.courses tr td,
-table.courses tr th {
+table.zips tr td,
+table.zips tr th {
     padding: 3px;
     font-size: 12px;
 }
 
-table.courses tr:nth-child(even) {
+table.zips tr:nth-child(even) {
     background: #eee;
 }
 
