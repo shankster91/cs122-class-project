@@ -1,8 +1,17 @@
+''' 
+This file is used to generate lists of zips and states that are used to create
+dropdowns in the Django app. Code here taken from PA3 and modified to use our
+db and data points.
+'''
+
 import sqlite3
 import csv
 
 
 def generate_lists():
+    '''
+    Generates lists of zips and states and writes them out to CSV files
+    '''
 
     connection = sqlite3.connect('../../../zip_db.sqlite3')
     c = connection.cursor()

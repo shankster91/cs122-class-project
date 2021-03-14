@@ -3,10 +3,12 @@ from django.template import loader
 from django.http import HttpResponse
 from django import forms
 from pyzipcode import ZipCodeDatabase
+from uszipcode import SearchEngine
 
 import os
 import csv
 import sys
+import json
 
 API_KEY = 'AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -17,6 +19,7 @@ import matching_algorithm
 
 
 zcdb = ZipCodeDatabase()
+search = SearchEngine(simple_zipcode=True)
 PREF_COLS = {
     'Demographics': 'census',
     'Business': 'business_count',
@@ -124,6 +127,7 @@ def index(request):
     if res is None:
         context['result'] = None
         fin_list = []
+        bounds_list = []
     else:
         columns = ['Zip Code', '% Match']
         context['result'] = res
@@ -134,17 +138,28 @@ def index(request):
         context["map_str"] = map_str
 
         fin_list = []
+        bounds_list = []
         for i, tup in enumerate(res):
-              _zip, _ = tup
-              zip_cln = int(_zip.lstrip("0"))
-              zip_info = zcdb[zip_cln]
-              zip_txt = "Match #" + str(i+1) + " " + _zip
-              fin_list.append([zip_txt, zip_info.latitude, zip_info.longitude])
+            bounds = {}
+            _zip, _ = tup
+            zip_cln = int(_zip.lstrip("0"))
+            zip_info = zcdb[zip_cln]
+            zip_txt = "Match #:" + str(i+1) + " " + _zip + "<br>" \
+                      + zip_info.city + ", " + zip_info.state
+            fin_list.append([zip_txt, zip_info.latitude, zip_info.longitude])
+            zip_info_bds = search.by_zipcode(_zip)
+            bounds['north'] = zip_info_bds.bounds_north
+            bounds['south'] = zip_info_bds.bounds_south
+            bounds['east'] = zip_info_bds.bounds_east
+            bounds['west'] = zip_info_bds.bounds_west
+            bounds_list.append(json.dumps(bounds))
+
 
     context['form'] = form
     context['fin_list'] = fin_list
+    context['bounds_list'] = bounds_list
     #context['map'] = _map
-    #print(context['map'])
+    print(context['bounds_list'])
     #print(args)
     #print(res)
     return render(request, 'zipsearch/index.html', context)
