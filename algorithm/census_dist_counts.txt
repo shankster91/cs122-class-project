@@ -1,1 +1,1 @@
-{"age": 13, "sex": 2, "educ": 7, "income": 10, "marital": 10, "race": 8, "language": 2, "birthPlace": 2, "HHsize": 1, "housing": 3, "lastMove": 6, "popDensity": 1, "unemployment": 1, "lfpr": 1}
+{"HHsize": 1, "age": 13, "income": 10, "educ": 7, "sex": 2, "race": 8, "birthPlace": 2, "language": 2, "marital": 10, "housing": 3, "lfpr": 1, "unemployment": 1, "lastMove": 6, "popDensity": 1}

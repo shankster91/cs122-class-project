@@ -1,18 +1,18 @@
 '''
-This file contains the algorithm that computes the average squared difference
-between the attributes of a user-specified starting zip code and the attributes
-of each zip code in a user-specified state. The algorithm then selects the five
-zip codes in that state that are most similar to the user-specified zip code
-(i.e. the five zip codes with the smallest average squared difference).
+This file computes the average squared difference between the attributes of a
+user-specified starting zip code and the attributes of each zip code in a
+user-specified state. It then selects the five zip codes in that state that are
+most similar to the user-specified zip code (i.e. the five zip codes with the
+smallest average squared difference).
 '''
 
+import os
 import math
 import sqlite3
 import json
 import pandas as pd
 import numpy as np
 from scipy import stats
-import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -40,15 +40,16 @@ class zipInfo(object):
         self.data = data[data['zip'] != start_zip]
         self.best_zips = [(None, math.inf)] * 5
 
-        self.table_counts = get_counts(os.path.join(BASE_DIR, 'algorithm', 'table_counts.txt'))
+        self.table_counts = get_counts(os.path.join(BASE_DIR, 'algorithm',
+                                                    'table_counts.txt'))
         if 'census' in self.tables:
-            self.census_dist_counts = get_counts(os.path.join(BASE_DIR, 'algorithm', 'census_dist_counts.txt'))
+            self.census_dist_counts = get_counts(os.path.join(BASE_DIR,
+                                         'algorithm', 'census_dist_counts.txt'))
 
     def find_best_zips(self, row):
         '''
         Compute the average squared difference for the given zip code, and
-        update zipInfo in place with the best zip code matches (i.e. the zip
-        codes that have the smallest average squared difference).
+        update zipInfo in place with the best zip code matches.
 
         Inputs:
             row: a row of a pandas dataframe containing data for a zip code in
@@ -59,15 +60,15 @@ class zipInfo(object):
         '''
         num_tables, num_weather_vars = self.adjust_counts_for_nan(row)
         avg_sq_diff = self.compute_avg_sq_diff(row, num_tables, num_weather_vars)
-        if avg_sq_diff and (not np.isnan(avg_sq_diff)):
+        if not np.isnan(avg_sq_diff):
             self.update_best_zips(row['zip'], avg_sq_diff)
 
     def adjust_counts_for_nan(self, row):
         '''
         Adjust the number of tables and weather variables to disregard
         variables/tables that contain only NANs for the given zip code.
-        We are interested in weather variables, because weather is the only
-        table that can have NANs for some variables but not for others.
+        Weather is the only table that can have NANs for some variables but not
+        for others.
 
         Inputs:
             row: a row of a pandas dataframe containing data for a zip code in
@@ -98,7 +99,7 @@ class zipInfo(object):
         '''
         Compute the average squared difference for the given zip code.
         Returns None if the average squared difference exceeds the average
-        squared differences for the top five best zip code matches.
+        squared differences for the current five best zip code matches.
 
         Inputs:
             row: a row of a pandas dataframe containing data for a zip code in
@@ -129,7 +130,7 @@ class zipInfo(object):
                 if not np.isnan(sq_diff):
                     avg_sq_diff = np.nansum([avg_sq_diff, sq_diff * (1 / wgt)])
                 if avg_sq_diff >= best_avg_sq_diff5:
-                    return None
+                    return np.nan
         return avg_sq_diff
 
     def update_best_zips(self, zip_code, avg_sq_diff):
@@ -204,17 +205,13 @@ def pull_data(args_from_ui):
     data.drop('state', axis=1, errors='ignore', inplace=True)
     data = data.astype(dtype=float)
     data[data.lt(0)] = np.nan
-
-    # Drop rows only containing NANs
     data = data[(data.drop('zip', axis=1).notnull()).any(axis=1)]
 
     zips = data['zip']
     data.drop('zip', axis=1, inplace=True)
     data = (data - data.mean())/data.std() # normalize
-
-    # Cap the z-scores at 4 / -4
-    data[data > 4] = 4
-    data[data < -4] = -4
+    data[data > 4] = 4 # max z-score is 4
+    data[data < -4] = -4 # min z-score is -4
 
     return pd.concat([zips, data], axis=1)
 
@@ -224,7 +221,7 @@ def create_sql_query(args_from_ui):
     Create a SQL query given user-specified parameters.
 
     Inputs:
-        args_from_ui: a dictionary containing the user-specified inputs
+        args_from_ui: a dictionary containing the user-specified inputs,
 
     Outputs:
         A tuple containing 1) a string representing a SQL query, and 2) a tuple
@@ -238,7 +235,8 @@ def create_sql_query(args_from_ui):
     join_statement = ''
     for table in tables:
         var_name_lst.append(''.join([table, '.*']))
-        join_statement = ' '.join([join_statement, 'LEFT JOIN', table, 'USING (zip)'])
+        join_statement = ' '.join([join_statement, 'LEFT JOIN', table,
+                                   'USING (zip)'])
     var_names = ', '.join(var_name_lst)
     select_statement = ' '.join(['SELECT', var_names, 'FROM census AS c'])
     conditions = 'WHERE c.state = ? OR c.zip = ?;'
@@ -275,10 +273,9 @@ def return_best_zips(args_from_ui):
 
     Outputs:
         best_zips: a list of five tuples containing 1) a string representing a
-          zip code, and 2) the similarity score corresponding to that zip code.
+          zip code, and 2) a string representing the zip code's similarity score.
     '''
-    tables = args_from_ui['tables']
-    if not tables:
+    if not args_from_ui['tables']:
         return 'Please check at least one of the checkboxes.'
 
     zip_info = zipInfo(args_from_ui)
@@ -294,4 +291,5 @@ def return_best_zips(args_from_ui):
 
     zip_info.data.apply(zip_info.find_best_zips, axis=1)
     zip_info.compute_scores()
+
     return zip_info.best_zips

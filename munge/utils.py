@@ -1,15 +1,14 @@
 '''
-File that contains functions for computing density and for converting data from
-county level to zip code level.
+This file contains utility functions used for data cleaning.
 '''
 
+import us
 import pandas as pd
 
 
 def compute_density(data):
     '''
-    Compute density by dividing the zip-code-level counts by the zip code's land
-    area in square miles.
+    Compute density by dividing zip-code-level counts by zip code land area.
 
     Inputs:
         data: a pandas dataframe containing counts.
@@ -31,15 +30,32 @@ def compute_density(data):
 
 def county_to_zip(data):
     '''
-    Convert data from county level to zip code level.
+    Map county-level data to zip codes.
 
     Inputs:
         data: a pandas dataframe containing county-level data.
 
     Outputs:
-        A pandas dataframe containing the county-level data for each zip code.
+        A pandas dataframe containing county-level data for each zip code.
     '''
     county_zip_map = pd.read_excel('data/raw_data/COUNTY_ZIP_122016.xlsx')
     county_zip_map.columns = [col.lower() for col in county_zip_map.columns]
     data = data.merge(county_zip_map, how='left', on='county')
     return data
+
+
+def extract_state_and_zip(index_name):
+    '''
+    Extracts a state abbreviation and a zip code from an index name.
+
+    Inputs:
+        index_name: a census geo object
+
+    Outputs:
+        A pandas series containing an integer representing a zip code and a
+          string representing a state abbreviation.
+    '''
+    zip_code = int(index_name.geo[1][1])
+    fips_code = index_name.geo[0][1]
+    state = us.states.lookup(fips_code)
+    return pd.Series([zip_code, state.abbr])

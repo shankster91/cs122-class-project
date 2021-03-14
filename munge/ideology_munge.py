@@ -1,16 +1,14 @@
 '''
-This file creates the final dataset containing the 2016 presidential election
-results in percentage terms. Writes the final dataset to a csv called
-ideology_data.csv.
+This file creates the final dataset for the 2016 presidential election
+results. It writes the final dataset to a csv called ideology_data.csv.
 
-For each zip code, the county-level vote counts for the county(ies) containing
-the zip code are multiplied by the fraction of the county's population that
-resides in that zip code. When a zip code straddles multiple counties, we
-take the sum of the population-weighted vote counts across the counties that the
-zip code straddles.
+County-level data is converted to zip-code level. For each zip code, the
+county-level vote counts for the county(ies) containing the zip code are
+multiplied by the fraction of the county's population that resides in that zip
+code. When a zip code straddles multiple counties, we take the sum of the
+population-weighted vote counts across the counties that the zip code straddles.
 
-To download the xlrd module: pip install xlrd
-To download the openpyxl module: pip install openpyxl
+Finally, the zip-code-level election results are converted into percentage terms.
 '''
 
 import pandas as pd
@@ -28,15 +26,13 @@ party_votes = votes[:-1]
 cols_to_keep = ['zip', 'res_ratio'] + votes
 data = data[cols_to_keep]
 
-# Multiply by the fraction of the county's population that resides in a zip
 data.loc[:, votes] = data[votes].multiply(data['res_ratio'], axis=0)
-# Sum across the counties that a zip code straddles
 data = data.groupby(['zip'])[votes].sum().reset_index()
 
 data.loc[:, party_votes] = data[party_votes].divide(data['total_votes'],
                                                     axis=0) * 100
-data.drop('total_votes', axis=1, inplace=True)
 
+data.drop('total_votes', axis=1, inplace=True)
 data.fillna(-1, inplace=True)
 
 data.to_csv('data/ideology_data.csv', index=False)

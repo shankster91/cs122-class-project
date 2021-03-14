@@ -1,15 +1,11 @@
 '''
-Pulls basic demographic data at the zip code level from the 5-year American
-Community Survey. Cleans the data by creating state and zip code variables and
-by computing population desnity. Writes the final dataset to a csv called
-census_data.csv.
-
-To download the census module: pip install censusdata
-To download the us module: pip install us
+This file pulls basic demographic data at the zip code level from the 5-year
+American Community Survey. It cleans the data by creating state and zip code
+variables and by computing population density. Finally, it writes the final
+dataset to a csv called census_data.csv.
 '''
 
 import censusdata
-import us
 from munge import utils
 
 
@@ -156,18 +152,9 @@ data = censusdata.download('acs5', 2019,
 data.columns = col_names
 data = data.add_prefix('census_')
 
-data = data[data >= 0].dropna(how='any')
+data = data[(data >= 0).all(1)] # only keep rows without any missing data
 
-zip_codes = []
-state_abbrs = []
-for label in data.index:
-    state_code = label.geo[0][1]
-    state = us.states.lookup(state_code) # convert FIPS to state postal codes
-    state_abbrs.append(state.abbr)
-    zip_code = int(label.geo[1][1])
-    zip_codes.append(zip_code)
-data.insert(0, 'state', state_abbrs)
-data.insert(1, 'zip', zip_codes)
+data[['zip', 'state']] = data.index.to_series().apply(utils.extract_state_and_zip)
 data.reset_index(drop=True, inplace=True)
 
 pop_density_data = utils.compute_density(data[['zip', 'census_totalPop']])
