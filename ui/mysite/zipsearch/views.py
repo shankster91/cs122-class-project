@@ -2,13 +2,11 @@ from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse
 from django import forms
-from pyzipcode import ZipCodeDatabase
-from uszipcode import SearchEngine
 
 import os
 import csv
 import sys
-import json
+from . import get_zip_info
 
 API_KEY = 'AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -18,8 +16,6 @@ sys.path.insert(0, ALGO_DIR)
 import matching_algorithm
 
 
-zcdb = ZipCodeDatabase()
-search = SearchEngine(simple_zipcode=True)
 PREF_COLS = {
     'Demographics': 'census',
     'Business': 'business_count',
@@ -46,17 +42,11 @@ def _load_res_column(filename, col=0):
     """Load column from resource directory."""
     return _load_column(os.path.join(RES_DIR, filename), col=col)
 
-#ZIPS = _build_dropdown(_load_res_column('zip_list.csv'))
 ZIPS = _load_res_column('zip_list.csv')
 STATES = _build_dropdown(_load_res_column('state_list.csv'))
 PREFS = _build_dropdown(_load_res_column('pref_list.csv'))
 
 class SearchForm(forms.Form):
-#    zips = forms.ChoiceField(
- #       label='Zip Code',
-  #      choices=ZIPS,
-   #     help_text='Select a zip code you want to compare to',
-    #    required=False)
     zips = forms.CharField(
         label = "Zip Code",
         min_length = 5,
@@ -82,9 +72,6 @@ class SearchForm(forms.Form):
 
 
 def index(request):
-    #template = loader.get_template('zipsearch/index.html')
-    #return render(request, 'zipsearch/index.html')
-    #return HttpResponse(template.render(request))
     context = {}
     args = {}
     res = None
@@ -126,40 +113,15 @@ def index(request):
     # Handle different responses of res
     if res is None:
         context['result'] = None
-        fin_list = []
-        bounds_list = []
     else:
         columns = ['Zip Code', '% Match']
         context['result'] = res
-    #     context['num_results'] = len(result)
         context['columns'] = columns
-        map_str = "https://www.google.com/maps/embed/v1/place?key=AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY&q=" \
-        + str(res[0][0]) + "+" + args["input_state"] + "&zoom=11"
-        context["map_str"] = map_str
 
-        fin_list = []
-        bounds_list = []
-        for i, tup in enumerate(res):
-            bounds = {}
-            _zip, _ = tup
-            zip_cln = int(_zip.lstrip("0"))
-            zip_info = zcdb[zip_cln]
-            zip_txt = "Match #:" + str(i+1) + " " + _zip + "<br>" \
-                      + zip_info.city + ", " + zip_info.state
-            fin_list.append([zip_txt, zip_info.latitude, zip_info.longitude])
-            zip_info_bds = search.by_zipcode(_zip)
-            bounds['north'] = zip_info_bds.bounds_north
-            bounds['south'] = zip_info_bds.bounds_south
-            bounds['east'] = zip_info_bds.bounds_east
-            bounds['west'] = zip_info_bds.bounds_west
-            bounds_list.append(json.dumps(bounds))
-
+        zinfo_list, bounds_list = get_zip_info.get_zip_info(res)
+        context['zinfo_list'] = zinfo_list
+        context['bounds_list'] = bounds_list
 
     context['form'] = form
-    context['fin_list'] = fin_list
-    context['bounds_list'] = bounds_list
-    #context['map'] = _map
-    print(context['bounds_list'])
-    #print(args)
-    #print(res)
+    
     return render(request, 'zipsearch/index.html', context)

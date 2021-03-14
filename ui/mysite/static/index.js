@@ -2,12 +2,12 @@
 Used the following blog for code/inspiration, modified location parameter to 
 use our results: https://medium.com/@limichelle21/integrating-google-maps-api-for-multiple-locations-a4329517977a */
 
-var fin_list;
+var zinfo_list;
 var bounds_list;
 var rectangle;
 
 function initMap() {
-    var locations = fin_list;
+    var locations = zinfo_list;
     // Center at top match zip
     var center = {lat: locations[0][1], lng: locations[0][2]};
 var map = new google.maps.Map(document.getElementById('map'), {
