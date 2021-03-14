@@ -281,13 +281,7 @@ def return_best_zips(args_from_ui):
     zip_info = zipInfo(args_from_ui)
 
     if zip_info.start_zip_data.empty:
-        return 0 #'Either the specified zip code is not a valid zip code, or ' \
-               #'there is no data available for the specified preference ' \
-               #'categories for the specified zip code. Please input a valid ' \
-               #'zip code or select additional preference categories.'
-    if zip_info.data.empty:
-        return 0 #'The specified state is not a valid state. Please input a ' \
-               #'valid state postal abbreviation.'
+        return 0
 
     zip_info.data.apply(zip_info.find_best_zips, axis=1)
     zip_info.compute_scores()
