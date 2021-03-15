@@ -275,9 +275,6 @@ def return_best_zips(args_from_ui):
         best_zips: a list of five tuples containing 1) a string representing a
           zip code, and 2) a string representing the zip code's similarity score.
     '''
-    if not args_from_ui['tables']:
-        return 'Please check at least one of the checkboxes.'
-
     zip_info = zipInfo(args_from_ui)
 
     if zip_info.start_zip_data.empty:
