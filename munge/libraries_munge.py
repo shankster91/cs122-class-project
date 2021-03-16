@@ -1,6 +1,6 @@
 
 import pandas as pd
-from munge import utils
+import utils
 
 library_raw = pd.read_csv("data/raw_data/pls_fy18_outlet_pud18i.csv")
 

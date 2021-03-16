@@ -1,6 +1,6 @@
 
 import pandas as pd
-from munge import utils
+import utils
 
 museums_raw1 = pd.read_csv("data/raw_data/MuseumFile2018_File1_Nulls.csv")
 museums_raw2 = pd.read_csv("data/raw_data/MuseumFile2018_File2_Nulls.csv")

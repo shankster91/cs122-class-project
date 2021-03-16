@@ -3,8 +3,6 @@ Pull weather info by zip
 '''
 
 import bs4
-import csv
-import re
 import time
 import pandas as pd
 
