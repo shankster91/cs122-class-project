@@ -2,7 +2,7 @@
 html, body {
     margin: 0;
     padding: 0;
-    font-family: Verdana;
+    font-family: Helvetica;
 }
 
 div#header {
@@ -12,10 +12,10 @@ div#header {
 }
 
 div#header h1 {
-    font-size: 18px;
+    font-size: 30px;
     color: #f5f5f5;
     margin: 0;
-    padding: 7px;
+    padding: 10px;
 }
 
 div.frame {
@@ -53,7 +53,7 @@ input.query {
 }
 
 label {
-    font-size: 12px;
+    font-size: 15px;
 }
 
 table.form {
@@ -70,7 +70,7 @@ table.form input {
 }
 
 table.form input#id_query {
-    font-size: 18px;
+    font-size: 14px;
 }
 
 table.form ul#id_days {
@@ -87,8 +87,8 @@ table.form ul#id_days li {
 
 table.zips {
     border: 1px solid #ddd;
-    padding: 0px;
-    margin: 0px;
+    padding: 10px;
+    margin: 10px;
 }
 
 table.zips tr th {
@@ -97,8 +97,8 @@ table.zips tr th {
 
 table.zips tr td,
 table.zips tr th {
-    padding: 3px;
-    font-size: 12px;
+    padding: 5px;
+    font-size: 19px;
 }
 
 table.zips tr:nth-child(even) {
