@@ -6,7 +6,7 @@ count of business establishment types in every zip code in America
 # I shortened business to biz
 
 import pandas as pd
-from munge import utils
+import utils
 
 biz_detail = pd.read_csv("data/raw_data/zbp18detail_sample.txt", encoding="cp1252",
                          dtype = {"zip": object, "naics": str})

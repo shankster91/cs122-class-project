@@ -6,7 +6,7 @@ dataset to a csv called census_data.csv.
 '''
 
 import censusdata
-from munge import utils
+import utils
 
 
 var_lst = ['DP05_0001E',

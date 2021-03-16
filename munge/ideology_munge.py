@@ -12,7 +12,7 @@ Finally, the zip-code-level election results are converted into percentage terms
 '''
 
 import pandas as pd
-from munge import utils
+import utils
 
 
 data = pd.read_csv('data/raw_data/2016_US_County_Level_Presidential_Results.csv')
