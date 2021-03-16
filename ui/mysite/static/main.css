@@ -3,7 +3,6 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif; 
-    background-image: url('img/home-cover.jpeg');
 }
 
 div#header {
@@ -11,10 +10,11 @@ div#header {
     margin: 0;
     padding: 0;
     text-align: center;
+    background-image: url('img/home-cover.jpeg');
 }
 
 div#header h1 {
-    font-size: 60px;
+    font-size: 75px;
     color: #ffffff;
     margin: 15px;
     padding: 4px;
@@ -29,32 +29,34 @@ div#header h3 {
 
 div.frame {
     margin: 15px;
-    background: #ffe;
+    background: #ffffff;
+   /*  background: rgb(6, 21, 224); /* box next to fields, not including field  */
 }
 
+/*
 div.args {
-    padding-left: 15px;
+    padding-left: 100px;
     padding-right: 15px;
-    background: #ffe;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }
+*/
 
 div.error {
-    padding: 15px;
+    padding: 21px;
+    margin: 21px;
     /* background: #eee; */
     border-top: 5px solid #ddd;
     border-bottom: 5px solid #ddd;
     text-align: center;
-    font-size: 18px;
+    font-size: 19px;
     color: #000000;
 }
 
 fieldset {
     padding: 3px;
     margin: 1px;
-    border: 1px solid #ddd;
-    background: #ffe;
+    background: #ffe;  /* box with results  */
 }
 
 fieldset legend {
@@ -70,21 +72,23 @@ input.query {
 
 label {
     font-size: 15px;
-    background: #ffe;
+    background: #FFF2AF; /* highlight over zip code, target state, preferences text */
 }
 
 table.form {
     text-align: left;
-    background: #ffe;
+    background:#FFF2AF; /* input box around text */
+    border: 8px solid #f6cf659c;
 }
 
 table.form tr td,
 table.form tr th {
     vertical-align: top;
+    float: center;
 }
 
 table.form input {
-    margin-right: 5px;
+    margin-right: 8px; /* moves preferences away from check boxes */ 
 }
 
 table.form input#id_query {
@@ -92,39 +96,45 @@ table.form input#id_query {
 }
 
 table.form ul#id_days {
-    margin: 0px;
+    margin: 0px; 
     padding: 0px;
 }
 
 table.form ul#id_days li {
     display: block;
-    float: left;
+    float: center;
     margin: 0px;
     padding: 0px;
-    background: #ffe;
+    background: #FFF2AF;
 }
 
 table.zips {
-    border: 1px solid #ddd;
-    padding: 10px;
+    border: 3px solid #000000;
+    padding: 10px; /* results table */ 
     margin: 10px;
-    background: #ffe;
+    background: #ffffff; 
+    text-align: center; 
+    border-collapse: collapse;
 }
 
+/*
 table.zips tr th {
-    text-align: left;
+    float: center;
 }
+*/
 
 table.zips tr td,
 table.zips tr th {
-    padding: 5px;
-    font-size: 15px;
+    padding: 10px; /* padding between each result */
+    font-size: 18px;
+    border: 3px solid #000000;
 }
 
 table.zips tr:nth-child(even) {
-    background: #eee;
+    background: #eee; /* color of every other result */
 }
 
+/*
 ul.errorlist {
     margin: 0px;
     padding: 0px;
@@ -138,15 +148,18 @@ ul.errorlist li {
     margin: 0px;
     padding: 0px;
 }
+*/
 
 span.helptext {
-    font-size: 10px;
-    color: gray;
+    font-size: 13px;
+    color:#000000; /* help text color */
+    margin: 0px;
+    padding: 0px;
 }
 
 div#map {
-    height: 900px;
+    height: 700px;
     width: 70%;
     float: right;
-    background-color: grey;
+    margin: 10px;
 }
