@@ -1,5 +1,5 @@
 '''
-Pull Walk Score by zip
+This file scrapes walk score by zip code from walkscore.com
 '''
 
 import bs4
@@ -9,13 +9,21 @@ import pandas as pd
 import util
 
 def get_walk_score(zip_code):
+    '''
+    Gets walk score for single zip code
+    
+    Input:
+    zip_code (str or int): a US zip code
+
+    Output:
+    score (int): Walk score for that zip code. Missing values get -1.
+    '''
 
     url = "https://www.walkscore.com/score/" + str(zip_code)
     req = util.get_request(url)
     if req:
         text = util.read_request(req)
     else:
-        #print("error zip:", zip_code)
         score =  -1
         text = None
     if text:
@@ -26,15 +34,22 @@ def get_walk_score(zip_code):
             match = re.search("(Walk Score of)(\s)(\d+)(\s)", score_txt)
             score = int(match.group(3))
         except AttributeError:
-            #print("error zip:", zip_code)
             score = -1
     else:
-        #print("error zip:", zip_code)
         score =  -1
 
     return score
 
 def get_walk_score_lst(zip_list):
+    '''
+    Takes list of zip codes and returns list of corresponding zip scores
+
+    Input:
+    zip_list (list): list of US zip codes
+
+    Output:
+    walk_score_lst (list): List of Walk scores for the zip codes.    
+    '''
 
     walk_score_lst = []
     index = 0
@@ -50,6 +65,17 @@ def get_walk_score_lst(zip_list):
     return walk_score_lst
 
 def walk_score_to_csv(zip_list, filename):
+    '''
+    Takes list of zip codes and writes list of corresponding walk scores
+    to CSV.
+
+    Input:
+    zip_list (list): list of US zip codes
+    filename (str): output filename
+
+    Output:
+    No return but writes a CSV file with zip codes and walk scores.    
+    '''
 
     walk_score_lst = get_walk_score_lst(zip_list)
     pd_dict = {'zip': zip_list, 'walk_score': walk_score_lst}

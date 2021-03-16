@@ -10,6 +10,7 @@ chardet==4.0.0
 Django==3.1.7
 idna==2.10
 jellyfish==0.6.1
+lxml==4.6.2
 numpy==1.20.1
 pandas==1.2.3
 pathlib-mate==1.0.1

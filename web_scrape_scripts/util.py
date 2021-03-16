@@ -1,5 +1,5 @@
 '''
-Utility functions for url requests
+Utility functions for url requests. Borrowed from PA3 to help with URL requests.
 '''
 
 import requests
