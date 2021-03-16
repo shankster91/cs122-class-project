@@ -3,6 +3,7 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif; 
+    /* will adding an image here replace the header image? */ 
 }
 
 div#header {
@@ -10,14 +11,14 @@ div#header {
     margin: 0;
     padding: 0;
     text-align: center;
-    background-image: url('img/home-cover.jpeg');
+    background-image: url('img/home-cover.jpeg'); /* make bigger */ 
 }
 
 div#header h1 {
-    font-size: 75px;
+    font-size: 85px;
     color: #ffffff;
     margin: 15px;
-    padding: 4px;
+    padding: 4px; /* make bigger */ 
 }
 
 div#header h3 {
@@ -27,10 +28,10 @@ div#header h3 {
     padding: 20px;
 }
 
-div.frame {
+div.frame { /* box next to fields, not including field  */
     margin: 15px;
     background: #ffffff;
-   /*  background: rgb(6, 21, 224); /* box next to fields, not including field  */
+   /*  background: rgb(6, 21, 224); 
 }
 
 /*
@@ -53,10 +54,10 @@ div.error {
     color: #000000;
 }
 
-fieldset {
+fieldset { /* box with results  */
     padding: 3px;
     margin: 1px;
-    background: #ffe;  /* box with results  */
+    background: #ffe;  
 }
 
 fieldset legend {
@@ -66,7 +67,7 @@ fieldset legend {
 }
 
 input.query {
-    font-size: 18px;
+    font-size: 15px;
     background: #ffe;
 }
 
@@ -75,9 +76,9 @@ label {
     background: #FFF2AF; /* highlight over zip code, target state, preferences text */
 }
 
-table.form {
+table.form { /* input box around text */
     text-align: left;
-    background:#FFF2AF; /* input box around text */
+    background:#FFF2AF; 
     border: 8px solid #f6cf659c;
 }
 
@@ -108,9 +109,9 @@ table.form ul#id_days li {
     background: #FFF2AF;
 }
 
-table.zips {
-    border: 3px solid #000000;
-    padding: 10px; /* results table */ 
+table.zips { /* results table */ 
+    border: 3px solid #000000; /* make border huge to center? */ 
+    padding: 10px; 
     margin: 10px;
     background: #ffffff; 
     text-align: center; 
@@ -130,8 +131,8 @@ table.zips tr th {
     border: 3px solid #000000;
 }
 
-table.zips tr:nth-child(even) {
-    background: #eee; /* color of every other result */
+table.zips tr:nth-child(even) { /* color of every other result */
+    background: #eee; 
 }
 
 /*
@@ -150,9 +151,9 @@ ul.errorlist li {
 }
 */
 
-span.helptext {
+span.helptext { /* help text color */
     font-size: 13px;
-    color:#000000; /* help text color */
+    color:#000000; 
     margin: 0px;
     padding: 0px;
 }
