@@ -2,17 +2,25 @@
 html, body {
     margin: 0;
     padding: 0;
-    font-family: Helvetica;
+    font-family: Arial, Helvetica, sans-serif; 
 }
 
 div#header {
-    background: rgb(6, 21, 224);
+    background: url('/static/img/home-cover.jpg')  /* rgb(6, 21, 224); */
     margin: 0;
     padding: 0;
+    text-align: center;
 }
 
 div#header h1 {
     font-size: 30px;
+    color: #f5f5f5;
+    margin: 0;
+    padding: 7px;
+}
+
+div#header h3 {
+    font-size: 20px;
     color: #f5f5f5;
     margin: 0;
     padding: 10px;
@@ -98,7 +106,7 @@ table.zips tr th {
 table.zips tr td,
 table.zips tr th {
     padding: 5px;
-    font-size: 19px;
+    font-size: 15px;
 }
 
 table.zips tr:nth-child(even) {
