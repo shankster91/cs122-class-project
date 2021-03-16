@@ -1,5 +1,7 @@
 #!/bin/bash 
 
+PYTHON="python3"
+
 # 1. What OS are we running on?
 PLATFORM=$($python3 -c 'import platform; print(platform.system())')
 
