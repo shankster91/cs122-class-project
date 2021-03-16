@@ -18,7 +18,7 @@ fi
 
 echo -e "\t--Python 3.7 is installed"
 
-# 2. What OS are we running on?
+# 2. Print OS Platform
 PLATFORM=$($PYTHON -c 'import platform; print(platform.system())')
 
 echo -e "2. Checking OS Platform..."
@@ -50,7 +50,7 @@ fi
 source env/bin/activate
 pip install -r requirements.txt
 
-# 6. Install Selenium drivers (Notice I'm doing this will the virtual environment is activated!!)
+# 5. Install Selenium drivers once virtual environment is activated
 echo -e "5. Installing Selenium Drivers..."
 if [[ $PLATFORM == 'Linux' ]];  then 
     wget https://github.com/mozilla/geckodriver/releases/download/v0.29.0/geckodriver-v0.29.0-linux64.tar.gz 
@@ -60,3 +60,41 @@ fi
 deactivate 
 echo -e "Install is complete."
 
+# 6. Read data
+echo -e "6. Read in data used to create database"
+echo -e "6a. Reading and Cleaning Business Count txt file..."
+# $PYTHON munge/business_count_munge.py # throws error, fix
+echo -e "\t--Business count data complete and available in data directory"
+echo -e
+echo -e "6b. Reading and Cleaning Census file..."
+$PYTHON munge/census_munge.py # takes ~1 min to run, shorten?
+echo -e "\t--Census count data complete and available in data directory"
+echo -e
+echo -e "6c. Reading and Cleaning Ideology file..."
+#$PYTHON munge/ideology_munge.py # throws error, fix
+echo -e "\t--Ideology file complete and available in data directory"
+echo -e
+echo -e "6d. Reading and Cleaning Library file..."
+$PYTHON munge/libraries_munge.py # gives a warning but still works
+echo -e "\t--Library count data complete and available in data directory"
+echo -e
+echo -e "6e. Reading and Cleaning Munseums file..."
+$PYTHON munge/museums_munge.py
+echo -e "\t--Museum count data complete and available in data directory"
+echo -e
+echo -e "6f. Reading and Cleaning Zillow file..."
+$PYTHON munge/zillow_munge.py
+echo -e "\t--Zillow data complete and available in data directory"
+echo -e
+echo -e "6g. Scraping GreatSchools website for first 100 zip codes and printing sample..."
+$PYTHON web_scrape_scripts/great_schools.py
+echo -e
+echo -e "6h. Scraping Walk Score website for first 100 zip codes and printing sample..."
+#$PYTHON web_scrape_scripts/walk_score.py # uncomment out after editing walk_score.py
+echo -e
+echo -e "6i. Scraping Weather Base website for first 100 zip codes and printing sample..."
+# $PYTHON web_scrape_scripts/weather.py# uncomment out after editing walk_score.py
+
+# 7. Move onto site
+echo -e "7. Launch site"
+$PYTHON ui/mysite/manage.py runserver

@@ -1,9 +1,12 @@
 '''
-Read in txt files from Economic Census Report and join to find
-count of business establishment types in every zip code in America
+This file creates the final dataset for the count of business establishments
+by type by zip code. It writes the final dataset to a csv called business_count.csv
+located in the data folder
+
+The original txt file is from Economic Census Report and it's joined with
+the provided data dictionary to find the count of business establishment types 
+in every zip code in America
 '''
-# Note: Pylint gave me all sorts of line length errors, so where possible,
-# I shortened business to biz
 
 import pandas as pd
 import utils
@@ -22,12 +25,6 @@ columns_select = ["zip", "est", "description"]
 
 biz_detail_select = biz[biz["naics"].isin(codes_select)].loc[:, columns_select]
 
-# doesn't work
-biz_count = biz_detail_select.pivot_table(index = [biz_detail_select.index.values, "zip"],
-                                          columns = "description",
-                                          values = "est").reset_index("zip")
-
-# works?
 biz_count_pivot = biz_detail_select.pivot_table(index = "zip",
                                                 columns = "description",
                                                 values = "est")
