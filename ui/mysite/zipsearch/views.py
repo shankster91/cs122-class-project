@@ -18,12 +18,12 @@ import matching_algorithm
 
 PREF_COLS = {
     'Demographics': 'census',
-    'Business': 'business_count',
-    'Schools': 'great_schools',
+    'Business Establishment Count': 'business_count',
+    'School Quality Ratings': 'great_schools',
     'Political Ideology': 'ideology',
-    'Libraries': 'libraries',
-    'Museums': 'museums',
-    'Walk Score': 'walk_score',
+    'Count of Libraries': 'libraries',
+    'Count of Museums': 'museums',
+    'Neighborhood Walkability': 'walk_score',
     'Weather': 'weather',
     'Housing Prices': 'zillow'
 }
