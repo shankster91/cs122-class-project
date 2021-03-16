@@ -14,8 +14,8 @@ div#header {
 }
 
 div#header h1 {
-    font-size: 40px;
-    color: #000000;
+    font-size: 60px;
+    color: #ffffff;
     margin: 15px;
     padding: 4px;
 }
@@ -29,44 +29,53 @@ div#header h3 {
 
 div.frame {
     margin: 15px;
+    background: #ffe;
 }
 
 div.args {
     padding-left: 15px;
     padding-right: 15px;
-    background-image: #ffe;
+    background: #ffe;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 }
 
 div.error {
     padding: 15px;
-    background: #eee;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+    /* background: #eee; */
+    border-top: 5px solid #ddd;
+    border-bottom: 5px solid #ddd;
+    text-align: center;
+    font-size: 18px;
+    color: #000000;
 }
 
 fieldset {
     padding: 3px;
     margin: 1px;
     border: 1px solid #ddd;
+    background: #ffe;
 }
 
 fieldset legend {
     font-weight: bold;
     font-size: 12px;
+    background: #ffe;
 }
 
 input.query {
     font-size: 18px;
+    background: #ffe;
 }
 
 label {
     font-size: 15px;
+    background: #ffe;
 }
 
 table.form {
     text-align: left;
+    background: #ffe;
 }
 
 table.form tr td,
@@ -92,12 +101,14 @@ table.form ul#id_days li {
     float: left;
     margin: 0px;
     padding: 0px;
+    background: #ffe;
 }
 
 table.zips {
     border: 1px solid #ddd;
     padding: 10px;
     margin: 10px;
+    background: #ffe;
 }
 
 table.zips tr th {
