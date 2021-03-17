@@ -1,17 +1,16 @@
 '''
 This file scrapes GreatSchools.org for the average rating of schools
-in every zip code in the US. It writes the final dataset to a csv called  
+in every zip code in the US. It writes the final dataset to a csv called
 great_schools.csv located in the data folder
 '''
 
-import bs4
-import requests
-import csv
 import json
 import re
-import pandas as pd
 import time
-       
+import bs4
+import requests
+import pandas as pd
+
 def get_school_score(zip_code):
     '''
     Scrapes the GreatSchools.org to find the list of schools
@@ -22,11 +21,12 @@ def get_school_score(zip_code):
         A single zip code
 
     Output:
-        The average school rating for the schools (if any) in the 
+        The average school rating for the schools (if any) in the
         zip code. Scale is on a range from 1 to 10 and -1 if no data
         is available for that zip code
     '''
-    url = "https://www.greatschools.org/search/search.zipcode?sort=rating&view=table&zip=" + str(zip_code)
+    url = 'https://www.greatschools.org/search/search.zipcode?sort=rating&view=table&zip=' \
+                                                                 + str(zip_code)
     req = requests.get(url)
 
     soup = bs4.BeautifulSoup(req.text, features = 'lxml')
@@ -35,8 +35,10 @@ def get_school_score(zip_code):
 
     data_layer = string[string.find('gon.search'):]
 
-    if "Your search did not return any schools in " + str(zip_code) not in data_layer:
-        school_string = data_layer.replace('gon.search={"schools":[', "").replace(';\n//]]>\n</script>', "")
+    msg = "Your search did not return any schools in " + str(zip_code)
+    if msg not in data_layer:
+        school_string = data_layer.replace('gon.search={"schools":[',
+                                           '').replace(';\n//]]>\n</script>', '')
         school_list = re.findall(r'"id":.*?"remediationData":', school_string)
 
         total = 0
@@ -47,16 +49,14 @@ def get_school_score(zip_code):
             if isinstance(rating, int):
                 total += rating
                 count += 1
-        
+
         if count != 0:
             return total / count
-        else:
-            return -1
-
-    else:
         return -1
-    
-def school_crawl_df(zip_code_list):
+
+    return -1
+
+def school_crawl_df(zip_codes):
     '''
     Initiate the web scraping function for a list of zip codes
     Returns a data frame and original iteration
@@ -65,13 +65,13 @@ def school_crawl_df(zip_code_list):
 
     Input:
         List of zip codes
-    
+
     Output:
         Dataframe of zip code and average school rating
     '''
     school_rating_list = []
     index = 0
-    for zip_code in zip_code_list:
+    for zip_code in zip_codes:
         school_rating = get_school_score(str(zip_code))
         school_rating_list.append(school_rating)
         index += 1
@@ -80,7 +80,7 @@ def school_crawl_df(zip_code_list):
             time.sleep(1)
             print("finished zip", zip_code, "at index", index)
 
-    pd_dict = {"zip": zip_code_list, "school_rating": school_rating_list}
+    pd_dict = {"zip": zip_codes, "school_rating": school_rating_list}
     df = pd.DataFrame(pd_dict)
 
   #  return_df.to_csv("data/great_schools.csv", index=False)
@@ -95,4 +95,3 @@ zip_code_list = pd.read_csv("data/census_data.csv").loc[:,"zip"]
 if __name__ == "__main__":
     cl_school_list = school_crawl_df(zip_code_list[:100])
     print(cl_school_list)
-

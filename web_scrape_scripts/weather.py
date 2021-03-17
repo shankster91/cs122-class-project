@@ -9,7 +9,6 @@ import bs4
 import pandas as pd
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -54,12 +53,13 @@ def get_weather_by_zip(zip_code, driver=None, headless=True):
     if driver is None:
         driver = start_driver(headless)
 
-    # find search box
+    # Find search box
     searchbox = driver.find_element_by_id("query")
     searchbox.click()
     searchbox.clear()
     searchbox.send_keys(zip_code)
-    button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
+    button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH,
+           "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
     page_source = try_button(driver, button, zip_code)
 
     soup = bs4.BeautifulSoup(page_source, features = 'lxml')
@@ -133,10 +133,10 @@ def weather_to_csv(zip_list, filename, headless=True):
     '''
 
     temp_lst, precip_lst = get_weather_lst(zip_list, headless)
-    pd_dict = {'zip': zip_list, 'temperature': temp_lst, 'precipitation': precip_lst}
+    pd_dict = {'zip': zip_list, 'temperature': temp_lst,
+               'precipitation': precip_lst}
     df = pd.DataFrame(pd_dict)
 
-    #df.to_csv(filename, index = False)
     df.to_csv(filename, index = False, mode = 'a', header = False)
 
 def batch_runner(zip_list, filename, headless=True):
@@ -164,9 +164,11 @@ def batch_runner(zip_list, filename, headless=True):
 
 def try_button(driver, button, zip_code):
     '''
-    This function tries to click the search query button and load the resulting page.
+    This function tries to click the search query button and load the resulting
+    page.
     We try twice explictly in case the page hangs initially.
-    We also limit our attempts to two and allow an error out if the page hangs indefinitely.
+    We also limit our attempts to two and allow an error out if the page hangs
+    indefinitely.
 
     Input:
     driver (Selenium web driver)
@@ -184,7 +186,8 @@ def try_button(driver, button, zip_code):
         searchbox.click()
         searchbox.clear()
         searchbox.send_keys(zip_code)
-        button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
+        button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH,
+           "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
         try:
             button.click()
         except TimeoutException:
@@ -192,7 +195,8 @@ def try_button(driver, button, zip_code):
             searchbox.click()
             searchbox.clear()
             searchbox.send_keys(zip_code)
-            button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
+            button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH,
+              "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
             button.click()
 
     page_source = driver.page_source
@@ -203,7 +207,8 @@ def try_button(driver, button, zip_code):
 if __name__ == "__main__":
     cl_zip_list = pd.read_csv("data/census_data.csv").loc[:,"zip"].to_list()
     cl_temp_lst, cl_precip_lst = get_weather_lst(cl_zip_list[:10])
-    cl_pd_dict = {'zip': cl_zip_list[:10], 'temperature': cl_temp_lst, 'precipitation': cl_precip_lst}
+    cl_pd_dict = {'zip': cl_zip_list[:10], 'temperature': cl_temp_lst,
+                  'precipitation': cl_precip_lst}
     cl_df = pd.DataFrame(cl_pd_dict)
 
     print(cl_df)

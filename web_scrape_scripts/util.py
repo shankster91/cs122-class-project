@@ -24,7 +24,7 @@ def get_request(url):
         if r.status_code == 404 or r.status_code == 403:
             r = None
     except Exception:
-        # fail on any kind of error
+        # Fail on any kind of error
         r = None
 
     return r
@@ -41,3 +41,4 @@ def read_request(request):
     except Exception:
         print("read failed: " + request.url)
         return ""
+        
