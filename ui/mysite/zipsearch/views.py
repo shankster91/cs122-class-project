@@ -114,7 +114,7 @@ def index(request):
     if res is None:
         context['result'] = None
     else:
-        columns = ['Zip Code', '% Match']
+        columns = ['Zip Code', 'Match Percent']
         context['result'] = res
         context['columns'] = columns
 

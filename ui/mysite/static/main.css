@@ -2,8 +2,8 @@
 html, body {
     margin: 0;
     padding: 0;
-    font-family: Arial, Helvetica, sans-serif; 
-    /* will adding an image here replace the header image? */ 
+    font-family: Arial, Helvetica, sans-serif;
+    /*background-image: url('img/home-cover.jpeg'); */
 }
 
 div#header {
@@ -18,7 +18,7 @@ div#header h1 {
     font-size: 85px;
     color: #ffffff;
     margin: 15px;
-    padding: 4px; /* make bigger */ 
+    padding: 45px; /* make bigger */ 
 }
 
 div#header h3 {
@@ -31,7 +31,7 @@ div#header h3 {
 div.frame { /* box next to fields, not including field  */
     margin: 15px;
     background: #ffffff;
-   /*  background: rgb(6, 21, 224); 
+  /*  background-image: url('img/home-cover.jpeg'); */
 }
 
 /*
@@ -52,6 +52,7 @@ div.error {
     text-align: center;
     font-size: 19px;
     color: #000000;
+    background: #eee;
 }
 
 fieldset { /* box with results  */
@@ -72,7 +73,7 @@ input.query {
 }
 
 label {
-    font-size: 15px;
+    font-size: 12px;
     background: #FFF2AF; /* highlight over zip code, target state, preferences text */
 }
 
@@ -110,9 +111,9 @@ table.form ul#id_days li {
 }
 
 table.zips { /* results table */ 
-    border: 3px solid #000000; /* make border huge to center? */ 
+    border: 5px solid #000000; /* make border huge to center? */ 
     padding: 10px; 
-    margin: 10px;
+    margin: 40px;
     background: #ffffff; 
     text-align: center; 
     border-collapse: collapse;
@@ -152,14 +153,14 @@ ul.errorlist li {
 */
 
 span.helptext { /* help text color */
-    font-size: 13px;
+    font-size: 12px;
     color:#000000; 
     margin: 0px;
     padding: 0px;
 }
 
 div#map {
-    height: 700px;
+    height: 800px;
     width: 70%;
     float: right;
     margin: 10px;
