@@ -113,7 +113,6 @@ def index(request):
 
                 try:
                     res = matching_algorithm.return_best_zips(args)
-                    print(res)
                 except Exception as e:
                     res = None
             else:
