@@ -1,10 +1,10 @@
 '''
 This file creates the final dataset for the count of business establishments
-by type by zip code. It writes the final dataset to a csv called business_count.csv
-located in the data folder
+by type by zip code. It writes the final dataset to a csv called
+business_count.csv located in the data folder
 
 The original txt file is from Economic Census Report and it's joined with
-the provided data dictionary to find the count of business establishment types 
+the provided data dictionary to find the count of business establishment types
 in every zip code in America
 '''
 
@@ -34,27 +34,30 @@ biz_count_pivot["zip"] = zips
 
 biz_count = biz_count_pivot.fillna(0)
 
-biz_count.rename(columns = {"Accommodation and Food Services": "business_accomodation_and_food_services", # there's a cool pandas method called add_prefix() that will add a prefix to all col names
-                            "Administrative and Support and Waste Management and Remediation Services": "business_admin_support_and_waste_mngmt",
-                            "Agriculture, Forestry, Fishing and Hunting": "business_agriculture_forestry_fishing_hunting",
-                            "Arts, Entertainment, and Recreation": "business_arts_entertain_rec",
-                            "Construction": "business_construction",
-                            "Educational Services": "business_schooling_services",
-                            "Finance and Insurance": "business_finance_and_insurance",
-                            "Health Care and Social Assistance": "business_hlth_care_social_assit",
-                            "Industries not classified": "business_unclassified",
-                            "Information": "business_information",
-                            "Management of Companies and Enterprises": "business_mngmt_companies",
-                            "Manufacturing": "business_manufacturing",
-                            "Mining, Quarrying, and Oil and Gas Extraction": "business_oil_extraction",
-                            "Other Services (except Public Administration)": "business_other_services",
-                            "Professional, Scientific, and Technical Services": "business_profess_scientif_tech_services",
-                            "Real Estate and Rental and Leasing": "business_real_estate_rental_leasing",
-                            "Retail Trade": "business_retail",
-                            "Transportation and Warehousing": "business_transportation_warehousing",
-                            "Utilities": "business_utilities",
-                            "Wholesale Trade": "business_wholesale_trade"
-                            }, inplace = True)
+new_names = {"Accommodation and Food Services": "business_accomod_food_srvcs",
+             "Administrative and Support and Waste Management and Remediation Services": \
+             "business_admin_support_and_waste_mngmt",
+             "Agriculture, Forestry, Fishing and Hunting": \
+             "business_agri_forestry_fishing_hunting",
+             "Arts, Entertainment, and Recreation": "business_arts_entertain",
+             "Construction": "business_construction",
+             "Educational Services": "business_schooling_services",
+             "Finance and Insurance": "business_finance_and_insurance",
+             "Health Care and Social Assistance": "business_hlth_care_social",
+             "Industries not classified": "business_unclassified",
+             "Information": "business_information",
+             "Management of Companies and Enterprises": "business_mngmt",
+             "Manufacturing": "business_manufacturing",
+             "Mining, Quarrying, and Oil and Gas Extraction": "business_oil",
+             "Other Services (except Public Administration)": "business_other",
+             "Professional, Scientific, and Technical Services": \
+             "business_profess_sci_tech_services",
+             "Real Estate and Rental and Leasing": "business_real_estate",
+             "Retail Trade": "business_retail",
+             "Transportation and Warehousing": "business_transport_warehouse",
+             "Utilities": "business_utilities",
+             "Wholesale Trade": "business_wholesale_trade"}
+biz_count.rename(columns = new_names, inplace = True)
 
 biz_count["zip"] = biz_count["zip"].astype(str)
 biz_count.reset_index(drop=True, inplace=True)

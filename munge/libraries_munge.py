@@ -3,7 +3,7 @@ This file creates the final dataset for the count of libraries
 by zip code. It writes the final dataset to a csv called libraries_zipcode.csv
 located in the data folder
 
-The original csv was downloaded from the Institute of Museum and 
+The original csv was downloaded from the Institute of Museum and
 Library Services website and converted to a count by zip code
 '''
 
