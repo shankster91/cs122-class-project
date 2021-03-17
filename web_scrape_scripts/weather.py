@@ -60,27 +60,8 @@ def get_weather_by_zip(zip_code, driver=None, headless=True):
     searchbox.clear()
     searchbox.send_keys(zip_code)
     button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
-    # Add retry logic for when web page hangs
-    try:
-        button.click()
-    except TimeoutException:
-        searchbox = driver.find_element_by_id("query")
-        searchbox.click()
-        searchbox.clear()
-        searchbox.send_keys(zip_code)
-        button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
-        try:
-            button.click()
-        except TimeoutException:
-            searchbox = driver.find_element_by_id("query")
-            searchbox.click()
-            searchbox.clear()
-            searchbox.send_keys(zip_code)
-            button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button"))) 
-            button.click() 
-
-    page_source = driver.page_source
-
+    page_source = try_button(driver, button)
+    
     soup = bs4.BeautifulSoup(page_source, "html5lib")
     link = soup.find("a", attrs = {"class": "redglow"})
 
@@ -180,3 +161,47 @@ def batch_runner(zip_list, filename, headless=True):
         weather_to_csv(batch, filename, headless)
         index += 100
         print("Batch done, index=", index)
+
+def try_button(driver, button):
+    '''
+    This function tries to click the search query button and load the resulting page. We try twice explictly in case
+    the page hangs initially. We also limit our attempts to two and allow an error out if the page hangs indefinitely.
+
+    Input:
+    driver (Selenium web driver)
+    button: Page location of search query button
+
+    Output:
+    page_source: source of resulting page when clicking button
+    '''
+
+    try:
+        button.click()
+    except TimeoutException:
+        searchbox = driver.find_element_by_id("query")
+        searchbox.click()
+        searchbox.clear()
+        searchbox.send_keys(zip_code)
+        button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
+        try:
+            button.click()
+        except TimeoutException:
+            searchbox = driver.find_element_by_id("query")
+            searchbox.click()
+            searchbox.clear()
+            searchbox.send_keys(zip_code)
+            button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button"))) 
+            button.click() 
+
+    page_source = driver.page_source
+
+    return page_source
+
+# Command line func for purpose of showing how script works
+if __name__ == "__main__":
+    zip_list = pd.read_csv("data/census_data.csv").loc[:,"zip"].to_list()
+    temp_lst, precip_lst = get_weather_lst(zip_list[:10])
+    pd_dict = {'zip': zip_list[:10], 'temperature': temp_lst, 'precipitation': precip_lst}
+    df = pd.DataFrame(pd_dict)
+
+    print(df)

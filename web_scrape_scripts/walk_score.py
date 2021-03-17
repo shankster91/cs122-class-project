@@ -59,7 +59,7 @@ def get_walk_score_lst(zip_list):
         index += 1
     
         if index % 100 == 0:
-            time.sleep(2)
+            time.sleep(1)
             print("Done with zip #", index)
     
     return walk_score_lst
@@ -83,3 +83,12 @@ def walk_score_to_csv(zip_list, filename):
 
     #df.to_csv(filename, index = False)
     df.to_csv(filename, index = False, mode = 'a', header = False)
+
+# Command line func for purpose of showing how script works
+if __name__ == "__main__":
+    zip_list = pd.read_csv("data/census_data.csv").loc[:,"zip"].to_list()
+    walk_score_lst = get_walk_score_lst(zip_list[:100])
+    pd_dict = {'zip': zip_list[:100], 'walk_score': walk_score_lst}
+    df = pd.DataFrame(pd_dict)
+
+    print(df)

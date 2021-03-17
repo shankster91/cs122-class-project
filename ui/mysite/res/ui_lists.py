@@ -23,9 +23,7 @@ def generate_lists():
     zip_code_clean = []
     #Prepend 0 for zips with leading 0s
     for val in zip_codes:
-        val_new = val[0]
-        while len(val_new) < 5:
-            val_new = "0" + val_new
+        val_new = val[0].zfill(5)
         zip_code_clean.append([val_new])
 
     zip_code_clean.sort()
