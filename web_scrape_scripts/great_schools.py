@@ -53,18 +53,17 @@ def school_crawl_df(zip_code_list):
 
         if index % 100 == 0:
             time.sleep(1)
-        #    print("finished zip", zip_code, "at index", index)
+            print("finished zip", zip_code, "at index", index)
 
     pd_dict = {"zip": zip_code_list, "school_rating": school_rating_list}
     df = pd.DataFrame(pd_dict)
 
-   # return_df.to_csv("data/great_schools.csv", index=False)
+    return_df.to_csv("data/great_schools.csv", index=False)
 
     return df
 
 zip_code_list = pd.read_csv("data/census_data.csv").loc[:,"zip"]
 
-return_df = school_crawl_df(zip_code_list[0:100])
-print(return_df)
+return_df = school_crawl_df(zip_code_list)
 
 

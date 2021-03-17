@@ -3,84 +3,76 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
-    /*background-image: url('img/home-cover.jpeg'); */
+    background-image: url('img/home-cover.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 div#header {
-    /*background: rgb(6, 21, 224); */
     margin: 0;
     padding: 0;
     text-align: center;
-    background-image: url('img/home-cover.jpeg'); /* make bigger */ 
 }
 
 div#header h1 {
-    font-size: 85px;
+    font-size: 95px;
     color: #ffffff;
     margin: 15px;
-    padding: 45px; /* make bigger */ 
+    padding: 35px; 
 }
 
 div#header h3 {
-    font-size: 20px;
+    font-size: 25px;
     color: #ffffff;
     margin: 15px;
     padding: 20px;
 }
 
-div.frame { /* box next to fields, not including field  */
+div.frame { 
     margin: 15px;
-    background: #ffffff;
-  /*  background-image: url('img/home-cover.jpeg'); */
 }
 
-/*
-div.args {
-    padding-left: 100px;
-    padding-right: 15px;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+input.query {
+    font-size: 15px;
 }
-*/
+
+label {
+    font-size: 18px;
+    background: #FFF2AF;
+}
+
+table.form { 
+    text-align: left;
+    background:#FFF2AF; 
+    border: 5px solid #EAD1A7;
+}
+
+span.helptext { 
+    font-size: 15px;
+    color:#000000; 
+    margin: 0px;
+    padding: 0px;
+}
 
 div.error {
     padding: 21px;
     margin: 21px;
-    /* background: #eee; */
-    border-top: 5px solid #ddd;
-    border-bottom: 5px solid #ddd;
+    border-top: 5px solid #EAD1A7;
+    border-bottom: 5px solid #EAD1A7;
     text-align: center;
-    font-size: 19px;
+    font-size: 21px;
     color: #000000;
     background: #eee;
 }
 
-fieldset { /* box with results  */
+fieldset {
     padding: 3px;
     margin: 1px;
-    background: #ffe;  
 }
 
 fieldset legend {
     font-weight: bold;
     font-size: 12px;
-    background: #ffe;
-}
-
-input.query {
-    font-size: 15px;
-    background: #ffe;
-}
-
-label {
-    font-size: 12px;
-    background: #FFF2AF; /* highlight over zip code, target state, preferences text */
-}
-
-table.form { /* input box around text */
-    text-align: left;
-    background:#FFF2AF; 
-    border: 8px solid #f6cf659c;
 }
 
 table.form tr td,
@@ -90,7 +82,8 @@ table.form tr th {
 }
 
 table.form input {
-    margin-right: 8px; /* moves preferences away from check boxes */ 
+    margin-right: 8px; 
+    margin-bottom: 8.5px;
 }
 
 table.form input#id_query {
@@ -107,56 +100,29 @@ table.form ul#id_days li {
     float: center;
     margin: 0px;
     padding: 0px;
-    background: #FFF2AF;
 }
 
-table.zips { /* results table */ 
-    border: 5px solid #000000; /* make border huge to center? */ 
+table.zips { 
+    border: 5px solid #000000; 
     padding: 10px; 
     margin: 40px;
-    background: #ffffff; 
     text-align: center; 
     border-collapse: collapse;
 }
 
-/*
-table.zips tr th {
-    float: center;
-}
-*/
-
 table.zips tr td,
 table.zips tr th {
-    padding: 10px; /* padding between each result */
-    font-size: 18px;
+    padding: 10px; 
+    font-size: 22px;
     border: 3px solid #000000;
 }
 
-table.zips tr:nth-child(even) { /* color of every other result */
+table.zips tr:nth-child(even) { 
+    background: #ffffff; 
+}
+
+table.zips tr:nth-child(odd) { 
     background: #eee; 
-}
-
-/*
-ul.errorlist {
-    margin: 0px;
-    padding: 0px;
-    padding-top: 5px;
-
-}
-
-ul.errorlist li {
-    font-size: 12px;
-    color: red;
-    margin: 0px;
-    padding: 0px;
-}
-*/
-
-span.helptext { /* help text color */
-    font-size: 12px;
-    color:#000000; 
-    margin: 0px;
-    padding: 0px;
 }
 
 div#map {
@@ -164,4 +130,5 @@ div#map {
     width: 70%;
     float: right;
     margin: 10px;
+    background: #ffffff
 }
