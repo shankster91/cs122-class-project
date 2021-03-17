@@ -22,8 +22,8 @@ PREF_COLS = {
     'Business Establishment Count': 'business_count',
     'School Quality Ratings': 'great_schools',
     'Political Ideology': 'ideology',
-    'Count of Libraries': 'libraries',
-    'Count of Museums': 'museums',
+    'Density of Libraries': 'libraries',
+    'Density of Museums': 'museums',
     'Neighborhood Walkability': 'walk_score',
     'Weather': 'weather',
     'Housing Prices': 'zillow'

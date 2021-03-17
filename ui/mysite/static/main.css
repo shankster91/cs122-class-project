@@ -15,17 +15,17 @@ div#header {
 }
 
 div#header h1 {
-    font-size: 95px;
+    font-size: 90px;
     color: #ffffff;
-    margin: 15px;
-    padding: 35px; 
+    margin: 5px;
+    padding: 5px; 
 }
 
 div#header h3 {
     font-size: 25px;
     color: #ffffff;
-    margin: 15px;
-    padding: 20px;
+    margin: 5px;
+    padding: 5px;
 }
 
 div.frame { 
