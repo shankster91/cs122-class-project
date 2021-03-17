@@ -41,7 +41,6 @@ echo -e "5. Installing Selenium Drivers..."
 if [[ $PLATFORM == 'Linux' ]];  then 
     wget https://github.com/mozilla/geckodriver/releases/download/v0.29.0/geckodriver-v0.29.0-linux64.tar.gz 
     tar -xvf geckodriver-v0.29.0-linux64.tar.gz
-    mv geckodriver env/bin/ 
 fi
 echo -e "Install is complete."
 
