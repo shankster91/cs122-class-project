@@ -1,6 +1,7 @@
 #!/bin/bash 
 
 # 1. Set Python variable
+echo -e "1. Check Python Version"
 PYTHON="python3"
 
 # 2. Print OS Platform
