@@ -12,5 +12,5 @@ INSTRUCTIONS FOR RUNNING THE APPLICATION
 8.	Click “Submit”
 9.	Wait patiently while the results populate.
 10.	Read the results and have fun interacting with the map!
-11.	(optional) To run the web scraping scripts, type:
+11.	(optional) To run a sample of the web scraping process, type:
 	./run_scraping.sh
