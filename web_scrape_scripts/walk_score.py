@@ -2,16 +2,16 @@
 This file scrapes walk score by zip code from walkscore.com
 '''
 
-import bs4
 import re
 import time
+import bs4
 import pandas as pd
 import util
 
 def get_walk_score(zip_code):
     '''
     Gets walk score for single zip code
-    
+
     Input:
     zip_code (str or int): a US zip code
 
@@ -48,7 +48,7 @@ def get_walk_score_lst(zip_list):
     zip_list (list): list of US zip codes
 
     Output:
-    walk_score_lst (list): List of Walk scores for the zip codes.    
+    walk_score_lst (list): List of Walk scores for the zip codes.
     '''
 
     walk_score_lst = []
@@ -57,11 +57,11 @@ def get_walk_score_lst(zip_list):
         walk_score = get_walk_score(zip_code)
         walk_score_lst.append(walk_score)
         index += 1
-    
+
         if index % 100 == 0:
             time.sleep(1)
             print("Done with zip #", index)
-    
+
     return walk_score_lst
 
 def walk_score_to_csv(zip_list, filename):
@@ -74,7 +74,7 @@ def walk_score_to_csv(zip_list, filename):
     filename (str): output filename
 
     Output:
-    No return but writes a CSV file with zip codes and walk scores.    
+    No return but writes a CSV file with zip codes and walk scores.
     '''
 
     walk_score_lst = get_walk_score_lst(zip_list)
@@ -86,9 +86,9 @@ def walk_score_to_csv(zip_list, filename):
 
 # Command line func for purpose of showing how script works
 if __name__ == "__main__":
-    zip_list = pd.read_csv("data/census_data.csv").loc[:,"zip"].to_list()
-    walk_score_lst = get_walk_score_lst(zip_list[:100])
-    pd_dict = {'zip': zip_list[:100], 'walk_score': walk_score_lst}
-    df = pd.DataFrame(pd_dict)
+    cl_zip_list = pd.read_csv("data/census_data.csv").loc[:,"zip"].to_list()
+    cl_walk_score_lst = get_walk_score_lst(cl_zip_list[:100])
+    cl_pd_dict = {'zip': cl_zip_list[:100], 'walk_score': cl_walk_score_lst}
+    cl_df = pd.DataFrame(cl_pd_dict)
 
-    print(df)
+    print(cl_df)

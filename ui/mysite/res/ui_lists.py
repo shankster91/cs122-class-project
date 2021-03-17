@@ -42,3 +42,4 @@ def generate_lists():
     for row in states:
         w.writerow(row)
     f.close()
+    

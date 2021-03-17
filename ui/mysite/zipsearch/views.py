@@ -1,12 +1,13 @@
-from django.shortcuts import render
-from django.template import loader
-from django.http import HttpResponse
-from django import forms
+'''
+This is the primary views file for the Django app. Some code here was borrowed from PA3
+but was then modified for our purposes.
+'''
 
 import os
 import csv
 import sys
-from . import get_zip_info
+from django.shortcuts import render
+from django import forms
 
 API_KEY = 'AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -14,7 +15,7 @@ ALGO_DIR = os.path.join(BASE_DIR, 'algorithm')
 RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
 sys.path.insert(0, ALGO_DIR)
 import matching_algorithm
-
+from . import get_zip_info
 
 PREF_COLS = {
     'Demographics': 'census',
@@ -47,6 +48,9 @@ STATES = _build_dropdown(_load_res_column('state_list.csv'))
 PREFS = _build_dropdown(_load_res_column('pref_list.csv'))
 
 class SearchForm(forms.Form):
+    '''
+    Django SearchForm
+    '''
     zips = forms.CharField(
         label = "Zip Code",
         min_length = 5,
@@ -54,11 +58,14 @@ class SearchForm(forms.Form):
         help_text = "Type in a 5 digit zip code to match")
 
     def zip_code_list_check(self):
+        '''
+        Checks if user-entered zip code is valid
+        '''
+
         zip_entry = self.cleaned_data['zips']
         if zip_entry not in ZIPS:
             return False
-        else:
-            return True 
+        return True
 
     state = forms.ChoiceField(
         label='Target State',
@@ -72,6 +79,16 @@ class SearchForm(forms.Form):
 
 
 def index(request):
+    '''
+    Takes in info from Django page, processes it, and return info to index.html for display
+
+    Input:
+    request (HTML request)
+
+    Output:
+    HTTP response of given template with results context
+    '''
+
     context = {}
     args = {}
     res = None
@@ -81,11 +98,6 @@ def index(request):
         # check whether it's valid:
         if form.is_valid():
 
-            # Convert form data to an args dictionary for find_courses
-            #input_zip = form.cleaned_data['zips']
-            #if input_zip != '':
-             #   args['input_zip'] = int(input_zip)
-
             if form.zip_code_list_check():
                 args['input_zip'] = int(form.cleaned_data['zips'])
                 args['input_state'] = form.cleaned_data['state']
@@ -93,22 +105,18 @@ def index(request):
                 for val in form.cleaned_data['prefs']:
                     tables.append(PREF_COLS[val])
                 args['tables'] = tables
-#             if form.cleaned_data['show_args']:
-#                 context['args'] = 'args_to_ui = ' + json.dumps(args, indent=2)
 
                 try:
                     res = matching_algorithm.return_best_zips(args)
                     print(res)
                 except Exception as e:
-                    res = None # does it ever get here?
+                    res = None
             else:
                 context['result'] = None
                 context['err'] = ('Either the specified zip code is not a valid zip code, or ' \
                 'there is no data available for the specified preference ' \
                 'categories for the specified zip code. Please input a valid ' \
                 'zip code or select additional preference categories.')
-    else:
-        pass # does it ever get here?
 
     # Handle different responses of res
     if res is None:
@@ -123,5 +131,5 @@ def index(request):
         context['bounds_list'] = bounds_list
 
     context['form'] = form
-    
+
     return render(request, 'zipsearch/index.html', context)

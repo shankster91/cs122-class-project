@@ -4,8 +4,8 @@ We use Selenium as the page we need to hit uses a JS query to populate results.
 We need to wait for this to occur before we can proceed.
 '''
 
-import bs4
 import time
+import bs4
 import pandas as pd
 
 from selenium import webdriver
@@ -19,15 +19,15 @@ from selenium.webdriver.firefox.options import Options
 def start_driver(headless=True):
     '''
     Starts Selenium webdriver
-    
+
     Input:
     headless (bool): True if user wants to suppress browser opening
                      and have scraping happen in background
-    
+
     Output:
     driver (Selenium webdriver)
     '''
-    
+
     ff_options = Options()
     if headless:
         ff_options.add_argument('--headless')
@@ -51,7 +51,7 @@ def get_weather_by_zip(zip_code, driver=None, headless=True):
                             -1 represents missing values.
     '''
 
-    if driver == None:
+    if driver is None:
         driver = start_driver(headless)
 
     # find search box
@@ -60,8 +60,8 @@ def get_weather_by_zip(zip_code, driver=None, headless=True):
     searchbox.clear()
     searchbox.send_keys(zip_code)
     button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
-    page_source = try_button(driver, button)
-    
+    page_source = try_button(driver, button, zip_code)
+
     soup = bs4.BeautifulSoup(page_source, "html5lib")
     link = soup.find("a", attrs = {"class": "redglow"})
 
@@ -111,12 +111,12 @@ def get_weather_lst(zip_list, headless=True):
         temp_lst.append(temp)
         precip_lst.append(precip)
         index += 1
-    
+
         if index % 100 == 0:
             time.sleep(1)
 
     driver.close()
-    
+
     return temp_lst, precip_lst
 
 def weather_to_csv(zip_list, filename, headless=True):
@@ -162,14 +162,16 @@ def batch_runner(zip_list, filename, headless=True):
         index += 100
         print("Batch done, index=", index)
 
-def try_button(driver, button):
+def try_button(driver, button, zip_code):
     '''
-    This function tries to click the search query button and load the resulting page. We try twice explictly in case
-    the page hangs initially. We also limit our attempts to two and allow an error out if the page hangs indefinitely.
+    This function tries to click the search query button and load the resulting page.
+    We try twice explictly in case the page hangs initially.
+    We also limit our attempts to two and allow an error out if the page hangs indefinitely.
 
     Input:
     driver (Selenium web driver)
     button: Page location of search query button
+    zip_code (str): zip_code to enter if retry needed
 
     Output:
     page_source: source of resulting page when clicking button
@@ -190,8 +192,8 @@ def try_button(driver, button):
             searchbox.click()
             searchbox.clear()
             searchbox.send_keys(zip_code)
-            button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button"))) 
-            button.click() 
+            button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
+            button.click()
 
     page_source = driver.page_source
 
@@ -199,9 +201,9 @@ def try_button(driver, button):
 
 # Command line func for purpose of showing how script works
 if __name__ == "__main__":
-    zip_list = pd.read_csv("data/census_data.csv").loc[:,"zip"].to_list()
-    temp_lst, precip_lst = get_weather_lst(zip_list[:10])
-    pd_dict = {'zip': zip_list[:10], 'temperature': temp_lst, 'precipitation': precip_lst}
-    df = pd.DataFrame(pd_dict)
+    cl_zip_list = pd.read_csv("data/census_data.csv").loc[:,"zip"].to_list()
+    cl_temp_lst, cl_precip_lst = get_weather_lst(cl_zip_list[:10])
+    cl_pd_dict = {'zip': cl_zip_list[:10], 'temperature': cl_temp_lst, 'precipitation': cl_precip_lst}
+    cl_df = pd.DataFrame(cl_pd_dict)
 
-    print(df)
+    print(cl_df)
