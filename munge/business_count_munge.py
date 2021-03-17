@@ -57,6 +57,7 @@ biz_count.rename(columns = {"Accommodation and Food Services": "business_accomod
                             }, inplace = True)
 
 biz_count["zip"] = biz_count["zip"].astype(str)
+biz_count.reset_index(drop=True, inplace=True)
 
 biz_count = utils.compute_density(biz_count)
 biz_count.fillna(0, inplace=True)
