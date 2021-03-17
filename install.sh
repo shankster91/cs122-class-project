@@ -47,6 +47,7 @@ echo -e "Install is complete."
 
 # 6. Read data
 echo -e "6. Read in data used to create database"
+echo -e
 echo -e "6a. Reading and Cleaning Business Count txt file..."
 $PYTHON munge/business_count_munge.py
 echo -e "\t--Business count data complete and available in data directory"
@@ -72,7 +73,7 @@ $PYTHON munge/zillow_munge.py
 echo -e "\t--Zillow data complete and available in data directory"
 echo -e
 echo -e "6g. Scraping GreatSchools website for first 100 zip codes and printing sample..."
-$PYTHON web_scrape_scripts/great_schools.py
+#$PYTHON web_scrape_scripts/great_schools.py
 echo -e
 echo -e "6h. Scraping Walk Score website for first 100 zip codes and printing sample..."
 #$PYTHON web_scrape_scripts/walk_score.py # uncomment out after editing walk_score.py
