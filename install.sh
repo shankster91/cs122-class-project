@@ -62,7 +62,7 @@ echo -e "6d. Reading and Cleaning Library file..."
 $PYTHON -W"ignore" munge/libraries_munge.py
 echo -e "\t--Library count data complete and available in data directory"
 echo -e
-echo -e "6e. Reading and Cleaning Munseums file..."
+echo -e "6e. Reading and Cleaning Museums file..."
 $PYTHON munge/museums_munge.py
 echo -e "\t--Museum count data complete and available in data directory"
 echo -e
