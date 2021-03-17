@@ -14,8 +14,10 @@ def get_zip_info(res):
     res (list of tuples): List of top zip code matches from the algorithm
 
     Output:
-    zifo_list (list of lists): Info on each zip - city, state, latitude, longitude
-    bounds_list (list of dictionaries): North, South, East, West lat/long bounds for each zip
+    zifo_list (list of lists): Info on each zip - city, state, latitude,
+      longitude
+    bounds_list (list of dictionaries): North, South, East, West lat/long bounds
+      for each zip
     '''
 
     zcdb = ZipCodeDatabase()

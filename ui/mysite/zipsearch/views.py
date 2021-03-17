@@ -1,6 +1,6 @@
 '''
-This is the primary views file for the Django app. Some code here was borrowed from PA3
-but was then modified for our purposes.
+This is the primary views file for the Django app. Some code here was borrowed
+from PA3 but was then modified for our purposes.
 '''
 
 import os
@@ -10,10 +10,12 @@ from django.shortcuts import render
 from django import forms
 
 API_KEY = 'AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY'
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
+                                                   os.path.abspath(__file__)))))
 ALGO_DIR = os.path.join(BASE_DIR, 'algorithm')
 RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
 sys.path.insert(0, ALGO_DIR)
+
 import matching_algorithm
 from . import get_zip_info
 
@@ -74,13 +76,16 @@ class SearchForm(forms.Form):
         required=False)
     prefs = forms.MultipleChoiceField(label='Preferences',
                                      choices=PREFS,
-                                     help_text='Select the data you would like to match on. You must choose at least one.',
-                                     widget=forms.CheckboxSelectMultiple(attrs={"checked":""}))
+                                     help_text='Select the data you would like' \
+                                     'to match on. You must choose at least one.',
+                                     widget=forms.CheckboxSelectMultiple(
+                                                          attrs={"checked":""}))
 
 
 def index(request):
     '''
-    Takes in info from Django page, processes it, and return info to index.html for display
+    Takes in info from Django page, processes it, and return info to index.html
+    for display
 
     Input:
     request (HTML request)
@@ -93,9 +98,9 @@ def index(request):
     args = {}
     res = None
     if request.method == 'GET':
-        # create a form instance and populate it with data from the request:
+        # Create a form instance and populate it with data from the request:
         form = SearchForm(request.GET or None)
-        # check whether it's valid:
+        # Check whether it's valid:
         if form.is_valid():
 
             if form.zip_code_list_check():
@@ -113,10 +118,10 @@ def index(request):
                     res = None
             else:
                 context['result'] = None
-                context['err'] = ('Either the specified zip code is not a valid zip code, or ' \
-                'there is no data available for the specified preference ' \
-                'categories for the specified zip code. Please input a valid ' \
-                'zip code or select additional preference categories.')
+                context['err'] = ('Either the specified zip code is not a valid' \
+                'zip code, or there is no data available for the specified ' \
+                'preference categories for the specified zip code. Please input ' \
+                'a valid zip code or select additional preference categories.')
 
     # Handle different responses of res
     if res is None:

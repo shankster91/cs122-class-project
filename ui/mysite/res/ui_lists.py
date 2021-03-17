@@ -1,4 +1,4 @@
-''' 
+'''
 This file is used to generate lists of zips and states that are used to create
 dropdowns in the Django app. Code here taken from PA3 and modified to use our
 db and data points.
