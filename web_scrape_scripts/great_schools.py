@@ -13,6 +13,19 @@ import pandas as pd
 import time
        
 def get_school_score(zip_code):
+    '''
+    Scrapes the GreatSchools.org to find the list of schools
+    in a given zip code. Returns the average rating of each schools
+    or -1 if there are no ratings available
+
+    Input:
+        A single zip code
+
+    Output:
+        The average school rating for the schools (if any) in the 
+        zip code. Scale is on a range from 1 to 10 and -1 if no data
+        is available for that zip code
+    '''
     url = "https://www.greatschools.org/search/search.zipcode?sort=rating&view=table&zip=" + str(zip_code)
     req = requests.get(url)
 
@@ -44,6 +57,18 @@ def get_school_score(zip_code):
         return -1
     
 def school_crawl_df(zip_code_list):
+    '''
+    Initiate the web scraping function for a list of zip codes
+    Returns a data frame and original iteration
+    wrote the dataframe to the data folder. Commented
+    out for brevity.
+
+    Input:
+        List of zip codes
+    
+    Output:
+        Dataframe of zip code and average school rating
+    '''
     school_rating_list = []
     index = 0
     for zip_code in zip_code_list:
@@ -58,12 +83,16 @@ def school_crawl_df(zip_code_list):
     pd_dict = {"zip": zip_code_list, "school_rating": school_rating_list}
     df = pd.DataFrame(pd_dict)
 
-    return_df.to_csv("data/great_schools.csv", index=False)
+  #  return_df.to_csv("data/great_schools.csv", index=False)
 
     return df
 
 zip_code_list = pd.read_csv("data/census_data.csv").loc[:,"zip"]
 
-return_df = school_crawl_df(zip_code_list)
+#return_df = school_crawl_df(zip_code_list)
 
+# Command line func for purpose of showing how script works
+if __name__ == "__main__":
+    cl_school_list = school_crawl_df(zip_code_list[:100])
+    print(cl_school_list)
 

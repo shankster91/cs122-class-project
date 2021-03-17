@@ -62,7 +62,7 @@ def get_weather_by_zip(zip_code, driver=None, headless=True):
     button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div[2]/div/table/tbody/tr[2]/td[4]/form/button")))
     page_source = try_button(driver, button, zip_code)
 
-    soup = bs4.BeautifulSoup(page_source, "html5lib")
+    soup = bs4.BeautifulSoup(page_source, features = 'lxml')
     link = soup.find("a", attrs = {"class": "redglow"})
 
     try:
@@ -70,7 +70,7 @@ def get_weather_by_zip(zip_code, driver=None, headless=True):
         driver.get(new_url)
 
         fin_page_source = driver.page_source
-        soup = bs4.BeautifulSoup(fin_page_source, "html5lib")
+        soup = bs4.BeautifulSoup(fin_page_source, features = 'lxml')
         tables = soup.find_all("table", attrs = {"class": "weather-table"})
 
         temp = -1

@@ -27,7 +27,7 @@ def get_walk_score(zip_code):
         score =  -1
         text = None
     if text:
-        soup = bs4.BeautifulSoup(text, "html5lib")
+        soup = bs4.BeautifulSoup(text, features = 'lxml')
         span = soup.find('span', attrs = {'id' : 'score-description-sentence'})
         try:
             score_txt = span.text
@@ -81,7 +81,6 @@ def walk_score_to_csv(zip_list, filename):
     pd_dict = {'zip': zip_list, 'walk_score': walk_score_lst}
     df = pd.DataFrame(pd_dict)
 
-    #df.to_csv(filename, index = False)
     df.to_csv(filename, index = False, mode = 'a', header = False)
 
 # Command line func for purpose of showing how script works

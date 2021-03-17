@@ -71,17 +71,9 @@ echo -e
 echo -e "6f. Reading and Cleaning Zillow file..."
 $PYTHON munge/zillow_munge.py
 echo -e "\t--Zillow data complete and available in data directory"
-echo -e
-echo -e "6g. Scraping GreatSchools website for first 100 zip codes and printing sample..."
-#$PYTHON web_scrape_scripts/great_schools.py
-echo -e
-echo -e "6h. Scraping Walk Score website for first 100 zip codes and printing sample..."
-#$PYTHON web_scrape_scripts/walk_score.py # uncomment out after editing walk_score.py
-echo -e
-echo -e "6i. Scraping Weather Base website for first 100 zip codes and printing sample..."
-# $PYTHON web_scrape_scripts/weather.py# uncomment out after editing walk_score.py
 
 # 7. load algorithm arguments
+echo -e
 echo -e "7. Load variable counts for similarity algorithm"
 $PYTHON algorithm/get_counts.py
 echo -e
@@ -90,4 +82,4 @@ echo -e
 echo -e "8. Launch site"
 $PYTHON ui/mysite/manage.py runserver
 
-deactivate 
+
