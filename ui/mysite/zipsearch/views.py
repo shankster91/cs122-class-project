@@ -77,7 +77,7 @@ class SearchForm(forms.Form):
     prefs = forms.MultipleChoiceField(label='Preferences',
                                      choices=PREFS,
                                      help_text='Select the data you would like' \
-                                     'to match on. You must choose at least one.',
+                                     ' to match on. You must choose at least one.',
                                      widget=forms.CheckboxSelectMultiple(
                                                           attrs={"checked":""}))
 
