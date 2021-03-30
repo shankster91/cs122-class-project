@@ -9,7 +9,7 @@ import sys
 from django.shortcuts import render
 from django import forms
 
-API_KEY = 'AIzaSyCx1D3rVVOjUkShIcYaDJi19MsTHUIoAWY'
+API_KEY = ''
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
                                                    os.path.abspath(__file__)))))
 ALGO_DIR = os.path.join(BASE_DIR, 'algorithm')
